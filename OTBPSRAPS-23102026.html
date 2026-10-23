@@ -1,0 +1,2341 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>मुदतबद्ध पदोन्नती प्रणाली — जिल्हाधिकारी कार्यालय, सातारा</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Marathi:ital@0;1&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root{
+    --paper:#F6F2E9;
+    --surface:#FFFFFF;
+    --ink:#2A2320;
+    --ink-soft:#5B5148;
+    --maroon:#7A2734;
+    --maroon-dark:#5A1C26;
+    --gold:#AC8A4A;
+    --gold-soft:#E7DAB8;
+    --line:#DCD2BD;
+    --ok:#3F6B4C;
+    --ok-bg:#E7F0E9;
+    --warn:#8A5A1F;
+    --warn-bg:#F6EBD9;
+    --danger:#A23B2E;
+    --danger-bg:#F5E4E0;
+    --mono-num:'Noto Sans Devanagari', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Noto Sans Devanagari', sans-serif;
+    font-size:15px;
+    line-height:1.55;
+  }
+  h1,h2,h3,h4{
+    font-family:'Tiro Devanagari Marathi', serif;
+    font-weight:400;
+    color:var(--maroon-dark);
+    margin:0 0 .4em 0;
+  }
+  header.masthead{
+    background:linear-gradient(180deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+    color:#F7EFE1;
+    padding:18px 28px;
+    border-bottom:5px solid var(--gold);
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+  header.masthead .emblem{
+    width:46px;height:46px;border-radius:50%;
+    border:2px solid var(--gold-soft);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Tiro Devanagari Marathi', serif;
+    font-size:20px;color:var(--gold-soft);
+    flex-shrink:0;
+  }
+  header.masthead h1{
+    color:#FBF3E4;
+    font-size:22px;
+    margin:0;
+  }
+  header.masthead p{
+    margin:2px 0 0 0;
+    font-size:13px;
+    color:#E4CFAE;
+  }
+  nav.tabs{
+    display:flex;
+    gap:2px;
+    background:var(--gold-soft);
+    padding:0 28px;
+    border-bottom:2px solid var(--maroon-dark);
+    overflow-x:auto;
+  }
+  nav.tabs button{
+    background:transparent;
+    border:none;
+    padding:12px 20px;
+    font-family:'Noto Sans Devanagari', sans-serif;
+    font-size:14.5px;
+    font-weight:600;
+    color:var(--maroon-dark);
+    cursor:pointer;
+    border-bottom:3px solid transparent;
+    white-space:nowrap;
+  }
+  nav.tabs button.active{
+    background:var(--paper);
+    border-bottom:3px solid var(--maroon);
+  }
+  main{
+    max-width:1280px;
+    margin:0 auto;
+    padding:24px 28px 60px 28px;
+  }
+  .panel{display:none;}
+  .panel.active{display:block;}
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:20px 22px;
+    margin-bottom:20px;
+  }
+  .card > h2{
+    font-size:19px;
+    border-bottom:1px solid var(--line);
+    padding-bottom:10px;
+    margin-bottom:16px;
+  }
+  .card > h3{
+    font-size:15.5px;
+    color:var(--maroon);
+    margin-top:22px;
+    margin-bottom:10px;
+    padding-top:12px;
+    border-top:1px dashed var(--line);
+  }
+  .card > h3:first-of-type{border-top:none;padding-top:0;margin-top:6px;}
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(230px,1fr));
+    gap:14px 20px;
+  }
+  .field{display:flex;flex-direction:column;gap:4px;}
+  .field.span2{grid-column:span 2;}
+  .field label{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    font-weight:600;
+  }
+  .field .hint{font-size:11px;color:var(--ink-soft);font-weight:400;}
+  input[type=text], input[type=date], input[type=number], select, textarea{
+    font-family:'Noto Sans Devanagari', sans-serif;
+    font-size:14px;
+    padding:8px 9px;
+    border:1px solid var(--line);
+    border-radius:2px;
+    background:#FFFDF9;
+    color:var(--ink);
+  }
+  input.date-field{
+    font-variant-numeric:tabular-nums;
+    letter-spacing:0.5px;
+    max-width:150px;
+  }
+  input.date-field.date-invalid{
+    border-color:var(--danger);
+    background:var(--danger-bg);
+  }
+  input:focus, select:focus, textarea:focus, button:focus{
+    outline:2px solid var(--maroon);
+    outline-offset:1px;
+  }
+  .yn{display:flex;gap:14px;align-items:center;padding-top:4px;}
+  .yn label{display:flex;align-items:center;gap:5px;font-size:13.5px;color:var(--ink);font-weight:500;}
+  .btn{
+    font-family:'Noto Sans Devanagari', sans-serif;
+    font-size:14px;
+    font-weight:600;
+    padding:9px 18px;
+    border-radius:2px;
+    border:1px solid var(--maroon);
+    background:var(--maroon);
+    color:#FBF3E4;
+    cursor:pointer;
+  }
+  .btn:hover{background:var(--maroon-dark);}
+  .btn.secondary{background:transparent;color:var(--maroon);}
+  .btn.secondary:hover{background:var(--gold-soft);}
+  .btn.small{padding:5px 11px;font-size:12.5px;}
+  .btn.danger{border-color:var(--danger);background:var(--danger);}
+  .btn.danger:hover{background:#7d2a20;}
+  .actions-row{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+  }
+  table.cr-table{margin-top:6px;}
+  th,td{
+    border:1px solid var(--line);
+    padding:7px 9px;
+    text-align:left;
+    vertical-align:top;
+  }
+  th{
+    background:var(--gold-soft);
+    color:var(--maroon-dark);
+    font-weight:600;
+    font-size:12.5px;
+  }
+  tbody tr:nth-child(even){background:#FCFAF4;}
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);}
+  .status-pill{
+    display:inline-block;
+    padding:2px 9px;
+    border-radius:12px;
+    font-size:11.5px;
+    font-weight:700;
+  }
+  .status-ok{background:var(--ok-bg);color:var(--ok);}
+  .status-warn{background:var(--warn-bg);color:var(--warn);}
+  .status-danger{background:var(--danger-bg);color:var(--danger);}
+  .status-muted{background:#EEE9DD;color:var(--ink-soft);}
+  ul.reason-list{margin:4px 0 0 0;padding-left:16px;font-size:11.5px;color:var(--ink-soft);}
+  .empty-state{
+    text-align:center;
+    padding:40px 20px;
+    color:var(--ink-soft);
+  }
+  .flagbox{
+    border-left:4px solid var(--warn);
+    background:var(--warn-bg);
+    padding:10px 14px;
+    font-size:12.5px;
+    color:#5c3d13;
+    margin-top:10px;
+  }
+  .helpbox{
+    border-left:4px solid var(--maroon);
+    background:#FBF3E4;
+    padding:12px 16px;
+    font-size:13px;
+    color:var(--ink-soft);
+    margin-bottom:18px;
+  }
+  .toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;}
+  .search-box{padding:8px 10px;border:1px solid var(--line);border-radius:2px;min-width:230px;font-family:'Noto Sans Devanagari',sans-serif;}
+  .detail-toggle{cursor:pointer;color:var(--maroon);font-weight:600;font-size:12px;text-decoration:underline;background:none;border:none;padding:0;}
+  .subrow td{background:#FBF8F0;}
+  .dbfile-bar{
+    background:#FBF3E4;
+    border-bottom:1px solid var(--line);
+    padding:8px 28px;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    display:flex;flex-wrap:wrap;gap:4px 24px;align-items:center;
+  }
+  .dbfile-bar .dbfile-name{
+    font-family:var(--mono-num);
+    background:#FFFDF9;border:1px solid var(--line);border-radius:2px;
+    padding:2px 8px;color:var(--maroon-dark);font-weight:700;
+  }
+  .dbfile-bar .dbfile-note{font-size:11.5px;}
+  footer.appfoot{text-align:center;padding:24px;font-size:12px;color:var(--ink-soft);}
+  @media(max-width:640px){
+    header.masthead{padding:14px 16px;}
+    main{padding:16px;}
+    .grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="emblem">स</div>
+  <div>
+    <h1>मुदतबद्ध पदोन्नती (आश्वासित प्रगती योजना) संगणकीय प्रणाली</h1>
+    <p>जिल्हाधिकारी कार्यालय, सातारा — वर्ग-3 व वर्ग-4 कर्मचारी</p>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn active" data-tab="entry">कर्मचारी नोंद</button>
+  <button class="tab-btn" data-tab="list">कर्मचारी यादी</button>
+  <button class="tab-btn" data-tab="results">निकाल व गणना</button>
+  <button class="tab-btn" data-tab="discrepancy">त्रुटी अहवाल</button>
+  <button class="tab-btn" data-tab="backup">डेटा बॅकअप</button>
+  <button class="tab-btn" data-tab="help">योजना व नियम</button>
+</nav>
+
+<main>
+
+  <!-- ===================== ENTRY PANEL ===================== -->
+  <section id="panel-entry" class="panel active">
+    <div class="card">
+      <h2 id="entry-title">नवीन कर्मचारी नोंद</h2>
+      <div class="helpbox">वर्ग व पद निवडल्यानंतर त्या पदासाठी लागू असणारे रकानेच खाली दिसतील. सर्व दिनांक अचूक भरा — गणना याच माहितीवर आधारित होईल.</div>
+
+      <h3>मूलभूत माहिती</h3>
+      <div class="grid">
+        <div class="field">
+          <label>कर्मचाऱ्याचे नाव *</label>
+          <input type="text" id="f_name">
+        </div>
+        <div class="field">
+          <label>Employee Sevarth ID</label>
+          <input type="text" id="f_empno">
+        </div>
+        <div class="field">
+          <label>वर्ग *</label>
+          <select id="f_class">
+            <option value="">-- निवडा --</option>
+            <option value="3">वर्ग-3 (Class III)</option>
+            <option value="4">वर्ग-4 (Class IV)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>सध्याचे पद *</label>
+          <select id="f_cadre"><option value="">-- आधी वर्ग निवडा --</option></select>
+        </div>
+        <div class="field">
+          <label>सध्याचे कार्यालय</label>
+          <input type="text" id="f_office" list="office-datalist" placeholder="उदा. तहसील कार्यालय, सातारा" autocomplete="off">
+          <datalist id="office-datalist"></datalist>
+        </div>
+        <div class="field">
+          <label>जन्मतारीख</label>
+          <input type="text" id="f_dob" class="date-field" placeholder="dd/mm/yyyy" maxlength="10" inputmode="numeric" autocomplete="off">
+          <span class="hint">नमूद नसल्यास नोंद जतन होईल, परंतु लाभ गणना व पात्रता तपासणी केली जाणार नाही.</span>
+        </div>
+        <div class="field">
+          <label>नियमित शासकीय सेवेत रुजू दिनांक</label>
+          <input type="text" id="f_join" class="date-field" placeholder="dd/mm/yyyy" maxlength="10" inputmode="numeric" autocomplete="off">
+          <span class="hint">मुदतबद्ध लाभाच्या 10/12 वर्षे गणनेचा आधार. नमूद नसल्यास नोंद जतन होईल, परंतु लाभ गणना व पात्रता तपासणी केली जाणार नाही.</span>
+        </div>
+      </div>
+
+      <h3>प्रत्यक्ष नियमित पदोन्नती (प्रत्येक पदोन्नतीसाठी "झाली" किंवा "झाली नाही" निवडणे आवश्यक)</h3>
+      <div class="helpbox" style="margin-bottom:14px;">प्रत्येक पदोन्नतीसाठी सुरुवातीला <b>"पदोन्नती झाली नाही"</b> हा पर्याय निवडलेला असतो. ती पदोन्नती झाली असल्यास "पदोन्नती झाली नाही" वरील खूण काढून टाका — त्याबरोबर <b>"पदोन्नती झाली"</b> आपोआप निवडले जाईल व तेव्हाच त्या पदोन्नतीचा दिनांक भरण्याचा रकाना दिसेल (व तो भरणे आवश्यक आहे). "पदोन्नती झाली नाही" निवडलेले असल्यास दिनांकाचा रकाना दिसणारच नाही.</div>
+      <div class="grid">
+        <div class="field">
+          <label>प्रथम पदोन्नती</label>
+          <div class="yn">
+            <label><input type="checkbox" id="f_fpd_done"> पदोन्नती झाली</label>
+            <label><input type="checkbox" id="f_fpd_notdone" checked> पदोन्नती झाली नाही</label>
+          </div>
+        </div>
+        <div class="field" id="wrap_fpd_date" style="display:none;">
+          <label>प्रथम पदोन्नती दिनांक</label>
+          <input type="text" id="f_fpd_actual" class="date-field" placeholder="dd/mm/yyyy" maxlength="10" inputmode="numeric" autocomplete="off" disabled>
+        </div>
+        <div class="field">
+          <label>द्वितीय पदोन्नती</label>
+          <div class="yn">
+            <label><input type="checkbox" id="f_spd_done"> पदोन्नती झाली</label>
+            <label><input type="checkbox" id="f_spd_notdone" checked> पदोन्नती झाली नाही</label>
+          </div>
+        </div>
+        <div class="field" id="wrap_spd_date" style="display:none;">
+          <label>द्वितीय पदोन्नती दिनांक</label>
+          <input type="text" id="f_spd_actual" class="date-field" placeholder="dd/mm/yyyy" maxlength="10" inputmode="numeric" autocomplete="off" disabled>
+        </div>
+        <div class="field">
+          <label>तृतीय पदोन्नती</label>
+          <div class="yn">
+            <label><input type="checkbox" id="f_tpd_done"> पदोन्नती झाली</label>
+            <label><input type="checkbox" id="f_tpd_notdone" checked> पदोन्नती झाली नाही</label>
+          </div>
+        </div>
+        <div class="field" id="wrap_tpd_date" style="display:none;">
+          <label>तृतीय पदोन्नती दिनांक</label>
+          <input type="text" id="f_tpd_actual" class="date-field" placeholder="dd/mm/yyyy" maxlength="10" inputmode="numeric" autocomplete="off" disabled>
+        </div>
+      </div>
+
+      <h3>पूर्वअट कागदपत्रे / परीक्षा</h3>
+      <div class="grid">
+        <div class="field">
+          <label>स्थैत्व प्रमाणपत्र (Sthaitva Pramanpatra) प्राप्त?</label>
+          <div class="yn">
+            <label><input type="radio" name="f_permanency" value="yes">होय</label>
+            <label><input type="radio" name="f_permanency" value="no" checked>नाही</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>प्रथम नियुक्ती किंवा कोणतीही पदोन्नती जात आधारित आरक्षणाद्वारे झाली आहे का?</label>
+          <div class="yn">
+            <label><input type="radio" name="f_caste_reservation" value="yes">होय</label>
+            <label><input type="radio" name="f_caste_reservation" value="no" checked>नाही</label>
+          </div>
+        </div>
+        <div class="field" id="wrap_caste_validity" style="display:none;">
+          <label>जात वैधता प्रमाणपत्र सादर केले आहे का?</label>
+          <div class="yn">
+            <label><input type="radio" name="f_caste_validity" value="yes">होय</label>
+            <label><input type="radio" name="f_caste_validity" value="no" checked>नाही</label>
+          </div>
+          <span class="hint">प्रथम नियुक्ती अथवा कोणत्याही पदोन्नतीच्या वेळी जात आधारित आरक्षणाचा लाभ घेतलेल्या कर्मचाऱ्यास हे प्रमाणपत्र सादर केल्याशिवाय OTBPS/RAPS कोणताही लाभ लागू होणार नाही.</span>
+        </div>
+        <div class="field span2">
+          <label>मत्ता व दायित्व प्रमाणपत्र — अद्ययावत सादर केलेले वर्ष (उदा. 2025 म्हणजे दि.31/03/2025 रोजीच्या स्थितीचे विवरण दि.31/05/2025 पूर्वी सादर)</label>
+          <input type="text" id="f_assets_cert_year" style="max-width:150px;" inputmode="numeric" maxlength="4" placeholder="उदा. 2025">
+          <div id="assets-cert-status" class="hint" style="margin-top:4px;"></div>
+        </div>
+        <div class="field cadre3-only class3-not-driver">
+          <label>हिंदी/मराठी भाषा परीक्षा सूट प्राप्त?</label>
+          <div class="yn">
+            <label><input type="radio" name="f_lang" value="yes">होय</label>
+            <label><input type="radio" name="f_lang" value="no" checked>नाही</label>
+          </div>
+        </div>
+        <div class="field cadre3-only class3-not-driver">
+          <label>संगणक पात्रता परीक्षा प्रमाणपत्र प्राप्त?</label>
+          <div class="yn">
+            <label><input type="radio" name="f_computer" value="yes">होय</label>
+            <label><input type="radio" name="f_computer" value="no" checked>नाही</label>
+          </div>
+        </div>
+        <div class="field cadre-typewriting">
+          <label>टंकलेखन प्रमाणपत्र प्राप्त? (लिपिक / अव्वल कारकून)</label>
+          <div class="yn">
+            <label><input type="radio" name="f_typewriting" value="yes">होय</label>
+            <label><input type="radio" name="f_typewriting" value="no" checked>नाही</label>
+          </div>
+        </div>
+        <div class="field cadre3-only class3-not-driver">
+          <label>उप सेवा विभागीय परीक्षा (SSD) उत्तीर्ण/सूट दिनांक</label>
+          <input type="text" id="f_ssd_date" class="date-field" placeholder="dd/mm/yyyy" maxlength="10" inputmode="numeric" autocomplete="off">
+          <span class="hint">उत्तीर्ण अथवा सूट मिळाल्याची तारीख</span>
+        </div>
+        <div class="field cadre3-only class3-not-driver">
+          <label>अर्हता परीक्षा (QT) उत्तीर्ण/सूट दिनांक</label>
+          <input type="text" id="f_qt_date" class="date-field" placeholder="dd/mm/yyyy" maxlength="10" inputmode="numeric" autocomplete="off">
+          <span class="hint">तलाठी/मंडळ अधिकारी संवर्गास 29/10/1997 पूर्वीस सूट लागू. लाभ-1 च्या पडताळणीत या दिनांकाचा विचार आधीच केला जातो — हे रकाने आधी भरा.</span>
+        </div>
+        <div class="field cadre3-only">
+          <label>पायाभूत प्रशिक्षणासाठी नामनिर्देशन झाले आहे का?</label>
+          <div class="yn">
+            <label><input type="radio" name="f_training_nominated" value="yes">होय</label>
+            <label><input type="radio" name="f_training_nominated" value="no" checked>नाही</label>
+          </div>
+        </div>
+        <div class="field cadre3-only" id="wrap_training_done">
+          <label>पायाभूत प्रशिक्षण पूर्ण / प्रमाणपत्र प्राप्त?</label>
+          <div class="yn">
+            <label><input type="radio" name="f_training_done" value="yes">होय</label>
+            <label><input type="radio" name="f_training_done" value="no" checked>नाही</label>
+          </div>
+        </div>
+        <div class="field cadre3-only span2" id="wrap_review55">
+          <label>55 वर्षे पुनर्विलोकन प्रमाणपत्र</label>
+          <div id="review55-status" class="hint" style="margin-bottom:4px;">जन्मतारीख भरल्यानंतर स्थिती आपोआप दिसेल.</div>
+          <input type="text" id="f_review55_date" class="date-field" style="max-width:220px;" placeholder="dd/mm/yyyy" maxlength="10" inputmode="numeric" autocomplete="off">
+          <span class="hint">कर्मचारी सद्या सेवेत असून वयाची 55 वर्षे पूर्ण झाल्यासच प्रमाणपत्र दिनांक आवश्यक; अन्यथा "लागू नाही" दर्शवले जाईल.</span>
+        </div>
+      </div>
+
+      <h3>मुदतबद्ध पदोन्नती लाभ — यापूर्वीच मंजूर झाले आहेत का?</h3>
+      <div class="helpbox" style="margin-bottom:14px;">जर एखादा मुदतबद्ध लाभ (Time Bound Promotion benefit) या कर्मचाऱ्यास यापूर्वीच आदेशान्वये मंजूर झालेला असेल, तर तो इथे नोंदवा. प्रणाली नोंदवलेला दिनांक नियमांनुसार पडताळेल (वरील SSD/QT दिनांकांसह) — जर तो योग्य असेल तर तसाच स्वीकारला जाईल; जर चुकीचा आढळला तर योग्य/सुधारित दिनांक दाखवून तो स्वीकारायचा की पूर्वीचाच कायम ठेवायचा हे विचारले जाईल, व तुमच्या निर्णयानुसार पुढील सर्व गणना केली जाईल. <b>"होय" निवडल्यास त्या लाभाचा मंजुरी दिनांक भरणे आवश्यक आहे</b> — दिनांक न भरल्यास नोंद जतन होणार नाही.</div>
+      <div class="grid">
+        <div class="field">
+          <label>लाभ-1 यापूर्वी मंजूर झाला आहे का?</label>
+          <div class="yn">
+            <label><input type="radio" name="f_granted1" value="yes">होय</label>
+            <label><input type="radio" name="f_granted1" value="no" checked>नाही</label>
+          </div>
+          <div id="granted1-eligibility-flag" class="hint"></div>
+        </div>
+        <div class="field granted1-fields" style="display:none;">
+          <label>लाभ-1 मंजुरी दिनांक</label>
+          <input type="text" id="f_granted1_date" class="date-field" placeholder="dd/mm/yyyy" maxlength="10" inputmode="numeric" autocomplete="off">
+        </div>
+        <div class="field granted1-fields" style="display:none;">
+          <label>लाभ-1 कोणत्या योजनेखाली मंजूर झाला?</label>
+          <select id="f_granted1_scheme">
+            <option value="otbps">OTBPS (जुनी योजना)</option>
+            <option value="raps">RAPS (सुधारित योजना)</option>
+          </select>
+        </div>
+        <div class="field granted1-fields span2" id="wrap_granted1_verify" style="display:none;">
+          <div id="granted1-verify-box"></div>
+        </div>
+
+        <div class="field">
+          <label>लाभ-2 यापूर्वी मंजूर झाला आहे का?</label>
+          <div class="yn">
+            <label><input type="radio" name="f_granted2" value="yes">होय</label>
+            <label><input type="radio" name="f_granted2" value="no" checked>नाही</label>
+          </div>
+          <div id="granted2-eligibility-flag" class="hint"></div>
+        </div>
+        <div class="field granted2-fields" style="display:none;">
+          <label>लाभ-2 मंजुरी दिनांक</label>
+          <input type="text" id="f_granted2_date" class="date-field" placeholder="dd/mm/yyyy" maxlength="10" inputmode="numeric" autocomplete="off">
+        </div>
+        <div class="field granted2-fields" style="display:none;">
+          <label>लाभ-2 कोणत्या योजनेखाली मंजूर झाला?</label>
+          <select id="f_granted2_scheme">
+            <option value="otbps">OTBPS (जुनी योजना)</option>
+            <option value="raps">RAPS (सुधारित योजना)</option>
+          </select>
+        </div>
+        <div class="field granted2-fields span2" id="wrap_granted2_verify" style="display:none;">
+          <div id="granted2-verify-box"></div>
+        </div>
+
+        <div class="field">
+          <label>लाभ-3 यापूर्वी मंजूर झाला आहे का?</label>
+          <div class="yn">
+            <label><input type="radio" name="f_granted3" value="yes">होय</label>
+            <label><input type="radio" name="f_granted3" value="no" checked>नाही</label>
+          </div>
+          <div id="granted3-eligibility-flag" class="hint"></div>
+        </div>
+        <div class="field granted3-fields" style="display:none;">
+          <label>लाभ-3 मंजुरी दिनांक</label>
+          <input type="text" id="f_granted3_date" class="date-field" placeholder="dd/mm/yyyy" maxlength="10" inputmode="numeric" autocomplete="off">
+        </div>
+        <div class="field granted3-fields span2" id="wrap_granted3_verify" style="display:none;">
+          <div id="granted3-verify-box"></div>
+        </div>
+      </div>
+
+      <h3>शिस्तभंग / सचोटी विषयक स्थिती</h3>
+      <div class="grid">
+        <div class="field">
+          <label>फौजदारी खटला / विभागीय चौकशी सुरू आहे का?</label>
+          <div class="yn">
+            <label><input type="radio" name="f_inquiry_ongoing" value="yes">होय</label>
+            <label><input type="radio" name="f_inquiry_ongoing" value="no" checked>नाही</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>मागील प्रकरणातील शिक्षा सद्या सुरू आहे का?</label>
+          <div class="yn">
+            <label><input type="radio" name="f_punishment_ongoing" value="yes">होय</label>
+            <label><input type="radio" name="f_punishment_ongoing" value="no" checked>नाही</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>सलग 2 वर्षांपेक्षा जास्त कालावधी गैरहजर होता का?</label>
+          <div class="yn">
+            <label><input type="radio" name="f_absence" value="yes">होय</label>
+            <label><input type="radio" name="f_absence" value="no" checked>नाही</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>सचोटी संशयास्पद आहे का?</label>
+          <div class="yn">
+            <label><input type="radio" name="f_integrity" value="yes">होय</label>
+            <label><input type="radio" name="f_integrity" value="no" checked>नाही</label>
+          </div>
+        </div>
+      </div>
+
+      <h3>सेवा समाप्तीविषयक दिनांक (लागू असल्यासच भरा)</h3>
+      <div class="grid">
+        <div class="field">
+          <label>मृत्यू दिनांक</label>
+          <input type="text" id="f_death_date" class="date-field" placeholder="dd/mm/yyyy" maxlength="10" inputmode="numeric" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>स्वेच्छा सेवानिवृत्ती (VRS) दिनांक</label>
+          <input type="text" id="f_vrs_date" class="date-field" placeholder="dd/mm/yyyy" maxlength="10" inputmode="numeric" autocomplete="off">
+        </div>
+      </div>
+
+      <h3>गोपनीय अहवाल (Confidential Report) — वार्षिक गुण (1 एप्रिल ते 31 मार्च)</h3>
+      <div class="hint" id="cr-help" style="margin-bottom:8px;">जन्मतारीख, रुजू तारीख व पद निवडल्यानंतर आवश्यक वर्षे आपोआप दिसतील.</div>
+      <table class="cr-table" id="cr-table">
+        <thead><tr><th style="width:55%">आर्थिक वर्ष</th><th style="width:30%">गुण (0-5)</th></tr></thead>
+        <tbody id="cr-rows"></tbody>
+      </table>
+
+      <h3>अतिरिक्त सूचना / शेरा (ऐच्छिक)</h3>
+      <div class="field">
+        <label>या नोंदीविषयी अतिरिक्त सूचना / शेरा</label>
+        <textarea id="f_remarks" rows="3" placeholder="उदा. जात वैधता प्रमाणपत्र जिल्हा जात पडताळणी समितीकडे प्रलंबित आहे; किंवा इतर निरीक्षण."></textarea>
+        <span class="hint">इथे लिहिलेली सूचना निकाल, तपशील, त्रुटी अहवाल व Excel/PDF निर्यातीत ध्वजांनंतर दर्शवली जाईल.</span>
+      </div>
+
+      <div class="actions-row">
+        <button class="btn" id="btn-save-emp">जतन करा (Save)</button>
+        <button class="btn secondary" id="btn-clear-emp">रिकामे करा</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== LIST PANEL ===================== -->
+  <section id="panel-list" class="panel">
+    <div class="card">
+      <div class="toolbar">
+        <h2 style="margin:0;">नोंदणीकृत कर्मचारी यादी</h2>
+        <input type="text" class="search-box" id="list-search" placeholder="नावाने शोधा...">
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr>
+            <th>नाव</th><th>वर्ग</th><th>पद</th><th>जन्मतारीख</th><th>रुजू तारीख</th><th>कृती</th>
+          </tr></thead>
+          <tbody id="emp-list-body"></tbody>
+        </table>
+      </div>
+      <div class="empty-state" id="list-empty" style="display:none;">अद्याप कोणतीही नोंद नाही. "कर्मचारी नोंद" टॅबमधून नवीन कर्मचारी जोडा.</div>
+    </div>
+  </section>
+
+  <!-- ===================== RESULTS PANEL ===================== -->
+  <section id="panel-results" class="panel">
+    <div class="card">
+      <div class="toolbar">
+        <h2 style="margin:0;">मुदतबद्ध पदोन्नती — गणना निकाल</h2>
+        <div style="display:flex;gap:10px;">
+          <button class="btn secondary" id="btn-export-excel">Excel निर्यात</button>
+          <button class="btn secondary" id="btn-export-pdf">PDF निर्यात</button>
+        </div>
+      </div>
+      <div class="helpbox">ज्या नोंदींमध्ये जन्मतारीख किंवा रुजू तारीख नमूद नाही, अशा नोंदींवर \"⚠️ माहिती अपूर्ण — गणना शक्य नाही\" असा ध्वज दाखवला जातो व त्यांची लाभ गणना केली जात नाही; मात्र स्थैत्व प्रमाणपत्र, जात वैधता प्रमाणपत्र, मत्ता व दायित्व प्रमाणपत्र, भाषा/संगणक/टंकलेखन प्रमाणपत्र, SSD/QT परीक्षा इ. तारखेवर अवलंबून नसलेले अपात्रता ध्वज त्या नोंदीवर दाखवले जातात. नोंदी सर्वात अलीकडे जतन केलेल्या क्रमाने दाखवल्या जातात — शेवटची जतन/सुधारित केलेली नोंद सर्वात वर दिसते; संपादनासाठी "संपादन" व तपशीलासाठी "तपशील" वर क्लिक करा. प्रत्येक कर्मचाऱ्यासाठी लाभ-1, लाभ-2 व लाभ-3 च्या तारखा व पात्रता स्थिती खाली दर्शवली आहे. तपशीलासाठी "तपशील" वर क्लिक करा. <b>टीप:</b> गुंतागुंतीच्या / रूपांतरित (OTBPS→RAPS) प्रकरणांमध्ये अंतिम आदेश काढण्यापूर्वी अधिकाऱ्याने स्वतः पडताळणी करावी.</div>
+      <div class="tablewrap">
+        <table id="results-table">
+          <thead><tr>
+            <th>नाव</th><th>वर्ग/पद</th><th>लाभ-1</th><th>लाभ-2</th><th>लाभ-3</th><th>सेवानिवृत्ती दि.</th><th></th>
+          </tr></thead>
+          <tbody id="results-body"></tbody>
+        </table>
+      </div>
+      <div class="empty-state" id="results-empty" style="display:none;">कोणतीही नोंद उपलब्ध नाही.</div>
+    </div>
+  </section>
+
+  <!-- ===================== DISCREPANCY REPORT PANEL ===================== -->
+  <section id="panel-discrepancy" class="panel">
+    <div class="card">
+      <div class="toolbar">
+        <h2 style="margin:0;">त्रुटी अहवाल (Discrepancy Report)</h2>
+        <div style="display:flex;gap:10px;">
+          <button class="btn secondary" id="btn-refresh-discrepancy">🔄 पुन्हा ताजे करा (Refresh)</button>
+          <button class="btn secondary" id="btn-export-discrepancy-excel">Excel निर्यात</button>
+        </div>
+      </div>
+      <div class="helpbox">ज्या कर्मचाऱ्यांच्या लाभांमध्ये त्रुटी आढळल्या ते येथे कार्यालयाच्या नावानुसार क्रमवारीत दाखवले आहेत — यात (1) यापूर्वी मंजूर लाभाचा चुकीचा दिनांक/योजना किंवा प्रलंबित निर्णय, (2) प्रमाणपत्रे/परीक्षा/शिस्तभंग/गोपनीय अहवाल इ. कारणांमुळे सद्या अपात्र ठरलेले लाभ (तसेच त्यामुळे साखळीने अपात्र ठरलेले पुढील लाभ), आणि (3) आवश्यक माहिती नमूद न केल्यामुळे आढळलेले ध्वज — जन्मतारीख / रुजू तारीख नमूद नसल्याने गणना व पात्रता तपासणी न झालेल्या नोंदींचा "माहिती अपूर्ण" ध्वज, त्याबरोबर त्या नोंदीचे इतर अपात्रता ध्वज (स्थैत्व प्रमाणपत्र, जात वैधता प्रमाणपत्र, मत्ता व दायित्व प्रमाणपत्र, भाषा/संगणक/टंकलेखन प्रमाणपत्र, SSD/QT परीक्षा, शिस्तभंग इ.) — या तिन्ही प्रकारच्या त्रुटींचा समावेश आहे.</div>
+      <div class="tablewrap">
+        <table id="discrepancy-table">
+          <thead><tr>
+            <th>कार्यालय</th><th>नाव</th><th>Sevarth ID</th><th>सध्याचे पद</th><th>त्रुटी असलेले लाभ व तपशील</th>
+          </tr></thead>
+          <tbody id="discrepancy-body"></tbody>
+        </table>
+      </div>
+      <div class="empty-state" id="discrepancy-empty" style="display:none;">कोणत्याही कर्मचाऱ्याच्या लाभांमध्ये सद्यस्थितीत त्रुटी आढळली नाही.</div>
+    </div>
+  </section>
+
+  <!-- ===================== BACKUP / RESTORE PANEL ===================== -->
+  <section id="panel-backup" class="panel">
+    <div class="card">
+      <h2>कार्यरत डेटाबेस (Excel) फाइल</h2>
+      <div class="dbfile-bar" style="padding:0;background:transparent;border:none;">
+        <span>फाइलचे नाव: <span class="dbfile-name" id="dbfile-name">—</span></span>
+        <span>स्थान: <b id="dbfile-loc">—</b></span>
+      </div>
+      <div id="dbfile-last" class="hint" style="margin-top:8px;">—</div>
+      <div class="helpbox" style="margin:14px 0 0 0;">टीप: ही प्रणाली सर्व माहिती आपल्या ब्राउझरमध्ये (localStorage) साठवते; वरील Excel फाइल बॅकअप / पुनर्संचयनासाठी वापरली जाते. ब्राउझरच्या सुरक्षा नियमांमुळे फाइलचा संपूर्ण पथ दाखवता येत नाही — बॅकअप फाइल आपल्या ब्राउझरच्या डाउनलोड फोल्डरमध्ये सापडते.</div>
+    </div>
+
+    <div class="card">
+      <h2>डेटा बॅकअप / पुनर्संचयन</h2>
+      <div class="helpbox">संपूर्ण कर्मचारी डेटाबेस (सर्व नोंदवलेली माहिती, फक्त निकाल नव्हे) Excel फाईलमध्ये बॅकअप घ्या, किंवा यापूर्वी घेतलेल्या बॅकअप/इम्पोर्ट फाईलमधून पुन्हा लोड करा. ही माहिती फक्त आपल्या ब्राउझरमध्ये (localStorage) साठवली जाते — नियमित बॅकअप घेण्याची शिफारस आहे.</div>
+      <div class="actions-row" style="margin-top:0;">
+        <button class="btn" id="btn-backup-excel">Excel बॅकअप घ्या (सर्व नोंदी)</button>
+        <button class="btn secondary" id="btn-restore-excel">Excel वरून पुनर्संचयित करा</button>
+        <input type="file" id="restore-file-input" accept=".xlsx,.xls" style="display:none;">
+      </div>
+      <div class="flagbox" style="margin-top:16px;">⚠️ पुनर्संचयित (Restore) केल्यास सध्याचा संपूर्ण डेटाबेस निवडलेल्या फाईलमधील माहितीने <b>बदलला</b> जाईल — ही कृती पूर्ववत करता येणार नाही. पुनर्संचयित करण्यापूर्वी सध्याच्या डेटाचा बॅकअप घेणे उत्तम.</div>
+    </div>
+  </section>
+
+  <!-- ===================== HELP PANEL ===================== -->
+  <section id="panel-help" class="panel">
+    <div class="card">
+      <h2>योजनेची थोडक्यात माहिती</h2>
+      <p>ही प्रणाली <b>Time Bound Promotion</b> (मुदतबद्ध पदोन्नती) — जुनी योजना <b>OTBPS</b> (01/01/2016 पूर्वी) व सुधारित योजना <b>RAPS — आश्वासित प्रगती योजना</b> (01/01/2016 पासून) — या दोन्हींनुसार गणना करते. प्रत्येक लाभाच्या प्रकाराला अधिकृत संकेत-नाव (कोड) दिले आहे, जे निकाल व अहवालात दिसते.</p>
+      <ul>
+        <li><b>वाहनचालक (Driver) संवर्ग वेगळा आहे:</b> इतर वर्ग-3 संवर्गांप्रमाणे भाषा सूट, संगणक प्रमाणपत्र, SSD परीक्षा, QT परीक्षा किंवा टंकलेखन प्रमाणपत्र यांची अट Driver संवर्गास लागू नाही — फक्त स्थैत्व प्रमाणपत्र, 58 वर्षे सेवानिवृत्ती, 55 वर्षे पुनर्विलोकन, शिस्तभंग तपासणी, गोपनीय अहवाल सरासरी व पायाभूत प्रशिक्षण याच अटी लागू होतात.</li>
+        <li><b>OTBPS (दोनच लाभ, प्रत्येकी 12 वर्षांनी):</b> A1.1.0 (join+12; QT मुळे पुढे ढकलल्यास A1.1.1). लाभ-2: A2.1.0 (आधार = लाभ-1) किंवा A2.1.1 (आधार = प्रत्यक्ष प्रथम पदोन्नती).</li>
+        <li><b>RAPS — नियमित साखळी (रूपांतरण नसलेली):</b> B1.1.0 (join+10; QT मुळे पुढे ढकलल्यास B1.1.1) · B2.2.0 (आधार: लाभ-1, B1.1.x वरून) · B3.1.0 (आधार: प्रत्यक्ष द्वितीय पदोन्नती) · B3.2.0 (आधार: कोणताही द्वितीय लाभ, अधिक विशिष्ट कोड लागू नसल्यास).</li>
+        <li><b>लाभ-2, आधार = प्रत्यक्ष प्रथम पदोन्नती (FP):</b> दिनांक नेहमी FP+10 (व 2016 चा तळ) — फक्त "वेळेत झाली का" ही अट कर्मचाऱ्याच्या रुजू-तारखेवरील वर्गीकरणानुसार ठरते:
+          <ul>
+            <li>रुजू+12 वर्षे दि.01/01/2016 नंतर येत असल्यास (कर्मचारी मूळतः RAPS कालावधीतील) — FP+10 पेक्षा वेळेत झाली का ही अट तपासली जाते — <b>B2.1.0-...FP+10(FP&lt;10Y)</b>.</li>
+            <li>रुजू+12 वर्षे दि.01/01/2016 पूर्वीच पूर्ण होत असल्यास (कर्मचारी मूळतः OTBPS कालावधीतील) — FP+12 पेक्षा वेळेत झाली का ही अट तपासली जाते, तरी लाभाचा दिनांक FP+10 च राहतो — <b>B2.1.1-...FP+10(FP&lt;12Y)</b>.</li>
+            <li>अपवाद: जर या दुसऱ्या प्रकरणात प्रत्यक्ष FP+12 चा दिनांकही दि.01/01/2016 पूर्वीच येत असेल (म्हणजे संपूर्ण प्रकरण RAPS सुरू होण्यापूर्वीच जुन्या पद्धतीने पूर्ण झालेले), तर ते शुद्ध जुने प्रकरण मानून <b>A2.1.1-OTBPS Second Benefit-FP+12</b> (दिनांक FP+12, कोणताही तळ नाही) असे गणले जाते.</li>
+          </ul>
+        </li>
+        <li>01/01/2016 पूर्वी देय ठरणारी जुनी 12-वर्षे तारीख कायम राहते; परंतु ती तारीख 01/01/2016 नंतर येत असल्यास संबंधित लाभ "OTBPS IN RAPS" नुसार पुनर्गणित होतो व आर्थिक लाभ 01/01/2016 पेक्षा आधी सुरू होत नाही:
+          <ul>
+            <li>लाभ-1 रूपांतरण: सामील तारखेपासून 10 वर्षे — <b>B1.2.1 / B1.3.0</b> (दोन्ही अधिकृत कोड, एकाच गणनेसाठी; QT मुळे पुढे ढकलल्यास <b>B1.2.2 / B1.3.1</b>).</li>
+            <li>लाभ-2 रूपांतरण (आधार = OTBPS लाभ-1, A1.1.x): त्या तारखेपासून 8 वर्षे — <b>B2.3.0-...Date-12+8</b>.</li>
+            <li>लाभ-2 रूपांतरण (आधार = प्रत्यक्ष प्रथम पदोन्नती, पण ती दि.01/01/2016 पूर्वीची असल्याने OTBPS लागू होती): त्या तारखेपासून 10 वर्षे — <b>B2.3.1-...Date-FP+10</b>.</li>
+            <li>लाभ-2 (आधार = B1.3.x): त्या तारखेपासून 10 वर्षे — <b>B2.4.0-...FB12To10Rev-FB+10</b>.</li>
+            <li>लाभ-3 (आधार = B2.4.0): त्या तारखेपासून 10 वर्षे — <b>B3.3.0-...ROIRFB+10SB+10</b>.</li>
+            <li>लाभ-3 (आधार = B2.3.0): त्या तारखेपासून 10 वर्षे — <b>B3.4.0-...12+8+10(24+6)</b>.</li>
+          </ul>
+        </li>
+        <li><b>विशेष 6-वर्षे नियम (B3.5.0):</b> ज्या कर्मचाऱ्यांना OTBPS चे लाभ-1 (A1.1.x) व लाभ-2 (A2.1.0) दोन्ही दि.01/01/2016 पूर्वीच मंजूर झाले आहेत, त्यांचा लाभ-3 A2.1.0 दिनांकापासून फक्त 6 वर्षांनी देय ठरतो (सर्वसाधारण 10 वर्षांऐवजी).</li>
+        <li><b>B3.6.0-RAPS Third Benefit-FP+12+10:</b> ज्या कर्मचाऱ्याने वेळेत नियमित प्रथम पदोन्नती मिळवली आहे आणि त्यानंतर द्वितीय लाभ मात्र जुन्या OTBPS पद्धतीने (दि.01/01/2016 पूर्वी) मंजूर झाला आहे, अशा प्रकरणी तृतीय लाभ द्वितीय लाभ दिनांकापासून 10 वर्षांनी देय ठरतो (आर्थिक लाभ 01/01/2016 पेक्षा आधी सुरू होत नाही).</li>
+        <li><b>QT परीक्षेचा समावेश:</b> लिपिक, सहायक महसूल अधिकारी (ARO), तलाठी व मंडळ अधिकारी या सर्व वर्ग-3 संवर्गांसाठी QT परीक्षा उत्तीर्ण/सूट दिनांक लाभ-1 च्या गणनेतच थेट समाविष्ट केला जातो (लाभ-1 चा दिनांक QT दिनांकापेक्षा आधीचा असल्यास, लाभ-1 QT दिनांकापर्यंत पुढे ढकलला जातो — कोड मध्ये "+Q" जोडले जाते). तलाठी व मंडळ अधिकारी संवर्गास फक्त लाभ-1 ची तारीख 29/10/1997 पूर्वीची असल्यास QT ची अट लागू नाही (Driver संवर्गास QT ची अटच लागू नाही).</li>
+        <li>वाहनचालक (Driver) संवर्गात QT अट नसल्याने वरील नियम त्यांना लागू होत नाही.</li>
+        <li>ज्या लाभाची तारीख आजच्या तारखेनंतर आहे, तेथे "🕒 भविष्यातील तारीख — सध्या लाभ लागू नाही" असा शेरा दाखवला जातो.</li>
+        <li><b>पात्रता साखळी नियम:</b> जर एखादा खालच्या टप्प्याचा लाभ (उदा. लाभ-1) स्वतः अपात्र ठरला (गोपनीय अहवाल सरासरी अपुरी, 55 वर्षे प्रमाणपत्र नाही, इ.) किंवा त्याच्या मंजुरीबाबत निर्णय प्रलंबित असेल, तर त्यावर आधारित पुढील लाभ (लाभ-2, लाभ-3) देखील आपोआप "⛔ अपात्र (मागील लाभामुळे)" असे चिन्हांकित होतात — जरी त्या पुढील लाभाचे स्वतःचे निकष वेगळे तपासले तर ते पूर्ण होत असले तरीही. हा ध्वज निकाल तक्ता, PDF व Excel (स्वतंत्र "पात्रता साखळी ध्वज" रकाना) या सर्वांत दिसतो.</li>
+      </ul>
+      <h3>यापूर्वी मंजूर झालेल्या लाभांची पडताळणी</h3>
+      <p>एखादा लाभ "यापूर्वीच मंजूर झाला आहे" असे नोंदवल्यास, प्रणाली तो दिनांक वरील नियमांनुसार पडताळते:</p>
+      <ul>
+        <li>नोंदवलेला दिनांक नियमानुसार <b>योग्य</b> असल्यास — "यापूर्वी मंजूर (योग्य दिनांक)" असे दाखवले जाते व तोच दिनांक पुढील लाभांच्या गणनेसाठी वापरला जातो.</li>
+        <li>नोंदवलेला दिनांक <b>चुकीचा</b> आढळल्यास — प्रणाली योग्य/सुधारित दिनांक दाखवते व अधिकाऱ्याला दोन पर्याय देते: <b>"सुधारित दिनांक स्वीकारा"</b> (पुढील संपूर्ण गणना सुधारित दिनांकानुसार होते, निकालात "🔁 सुधारित — पूर्वीचा लाभ दुरुस्त" असा ध्वज दिसतो) किंवा <b>"पूर्वीचाच दिनांक कायम ठेवा"</b> (पुढील गणना जुन्याच दिनांकानुसार होते, निकालात "↩️ पूर्वीचाच दिनांक कायम" असा ध्वज व योग्य दिनांक काय असायला हवा होता याची नोंद दिसते).</li>
+        <li>अधिकाऱ्याने अद्याप निर्णय घेतला नसल्यास — निकालात "❗ निर्णय प्रलंबित" असा ठळक ध्वज दिसतो व तोपर्यंत प्रणाली तात्पुरती सुधारित दिनांक वापरून पुढील गणना करते. अंतिम अहवाल कलेक्टर साहेबांकडे पाठवण्यापूर्वी असे कोणतेही प्रलंबित निर्णय शिल्लक नसावेत.</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="appfoot">जिल्हाधिकारी कार्यालय, सातारा — अंतर्गत प्रशासकीय उपयोगासाठी. सर्व माहिती फक्त आपल्या ब्राउझरमध्ये (localStorage) साठवली जाते.</footer>
+
+<script>
+/* ============================================================
+   CONSTANTS & CADRE CONFIG
+   ============================================================ */
+const RAPS_START = new Date(2016,0,1);          // 01 Jan 2016
+const QT_MANDATORY_FROM = new Date(1997,9,29);  // 29 Oct 1997
+
+const CADRES = {
+  clerk:   { cls:3, label:'महसूल सहाय्यक (लिपिक)', ladder:['सहायक महसूल अधिकारी (अव्वल कारकून)','नायब तहसीलदार (वर्ग-2)','तहसीलदार (वर्ग-1)'], typewriting:true, qtRequired:true, qtExemptBefore:null, qtOverride:true },
+  aro:     { cls:3, label:'सहायक महसूल अधिकारी (अव्वल कारकून)', ladder:['नायब तहसीलदार (वर्ग-2)','तहसीलदार (वर्ग-1)','उपजिल्हाधिकारी (वर्ग-1)'], typewriting:true, qtRequired:true, qtExemptBefore:null, qtOverride:true },
+  vro:     { cls:3, label:'तलाठी (Village Revenue Officer)', ladder:['मंडळ अधिकारी (वर्ग-3)','नायब तहसीलदार (वर्ग-2)','तहसीलदार (वर्ग-1)'], typewriting:false, qtRequired:true, qtExemptBefore:QT_MANDATORY_FROM, qtOverride:true },
+  circle:  { cls:3, label:'मंडळ अधिकारी (Circle Officer)', ladder:['नायब तहसीलदार (वर्ग-2)','तहसीलदार (वर्ग-1)','उपजिल्हाधिकारी (वर्ग-1)'], typewriting:false, qtRequired:true, qtExemptBefore:QT_MANDATORY_FROM, qtOverride:true },
+  driver:  { cls:3, label:'वाहनचालक (Driver)', ladder:[], typewriting:false, qtRequired:false, qtExemptBefore:null, qtOverride:false, reducedClass3:true },
+  peon:    { cls:4, label:'शिपाई (Peon)', ladder:['नाईक (वर्ग-4)','हवालदार (वर्ग-4)'] },
+  watchman:{ cls:4, label:'पहारेकरी (Watchman)', ladder:[] },
+  sweeper: { cls:4, label:'सफाई कामगार (Sweeper)', ladder:[] },
+};
+/* QT-override (pushing the first-benefit date forward to the QT passing/exemption date when QT comes
+   later) applies to all Class-3 non-Driver cadres: Clerk, ARO, Talathi, Circle Officer. VRO and Circle
+   Officer additionally carry the pre-29/10/1997 exemption (QT wasn't mandatory for them before that date).
+   Driver cadre (reducedClass3:true) is Class-3 for retirement age (58), 55-year review, disciplinary
+   checks, CR-average, and basic training — but is NOT required to have language exemption, computer
+   certificate, SSD exam, QT exam, or typewriting certificate (it has its own, simpler criteria list). */
+
+/* ============================================================
+   DATE HELPERS
+   ============================================================ */
+function pd(str){
+  if(!str) return null;
+  str = String(str).trim();
+  let m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(str);   // dd/mm/yyyy — the format every date field now uses
+  if(m){
+    const day=+m[1], month=+m[2], year=+m[3];
+    const d = new Date(year, month-1, day);
+    return (d.getFullYear()===year && d.getMonth()===month-1 && d.getDate()===day) ? d : null;
+  }
+  m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(str);          // yyyy-mm-dd — kept for records saved before this update
+  if(m){ const d = new Date(str+'T00:00:00'); return isNaN(d) ? null : d; }
+  return null;
+}
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmt(d){ if(!d) return '—'; const dd=String(d.getDate()).padStart(2,'0'), mm=String(d.getMonth()+1).padStart(2,'0'); return `${dd}/${mm}/${d.getFullYear()}`; }
+
+/* Masks a text input to dd/mm/yyyy as the user types, and flags it visually if the finished value
+   doesn't parse to a real calendar date.
+   IME / Google Input Tools safe: while an IME composition is active (Google Input Tools, Windows
+   Indic IMEs, etc.), the mask stays out of the way — rewriting input.value mid-composition breaks
+   the IME's candidate window and inserted text. Masking runs once after the composition ends,
+   on normal keystrokes, and on blur. */
+function attachDateMask(input){
+  let composing = false;
+  input.addEventListener('compositionstart', ()=>{ composing = true; });
+  input.addEventListener('compositionend', ()=>{ composing = false; maskDateField(input); });
+  input.addEventListener('input', (e)=>{
+    if(composing || e.isComposing) return;   // don't fight the IME while it is inserting text
+    maskDateField(input);
+  });
+  input.addEventListener('blur', ()=>{
+    maskDateField(input);
+    input.classList.toggle('date-invalid', !!(input.value && !pd(input.value)));
+  });
+}
+function maskDateField(input){
+  let digits = input.value.replace(/\D/g,'').slice(0,8);
+  let out = digits;
+  if(digits.length>4) out = digits.slice(0,2)+'/'+digits.slice(2,4)+'/'+digits.slice(4);
+  else if(digits.length>2) out = digits.slice(0,2)+'/'+digits.slice(2);
+  if(input.value !== out) input.value = out;
+  input.classList.remove('date-invalid');
+}
+
+function addYears(d,y){ const nd=new Date(d.getTime()); nd.setFullYear(nd.getFullYear()+y); return nd; }
+function lastDayOfMonth(year,monthIdx){ return new Date(year, monthIdx+1, 0); }
+function computeRetirement(dob, years){
+  const ageDate = addYears(dob, years);
+  if(ageDate.getDate()===1){
+    // last day of previous month
+    return new Date(ageDate.getFullYear(), ageDate.getMonth(), 0);
+  }
+  return lastDayOfMonth(ageDate.getFullYear(), ageDate.getMonth());
+}
+function minDate(...ds){ const v=ds.filter(Boolean); if(!v.length) return null; return new Date(Math.min(...v.map(d=>d.getTime()))); }
+function maxDate(...ds){ const v=ds.filter(Boolean); if(!v.length) return null; return new Date(Math.max(...v.map(d=>d.getTime()))); }
+
+/* Financial-year start-year containing date d (FY = 1 Apr - 31 Mar) */
+function fyOf(d){ return d.getMonth()>=3 ? d.getFullYear() : d.getFullYear()-1; }
+
+/* ============================================================
+   STORAGE
+   ============================================================ */
+const STORE_KEY = 'tbps_satara_employees_v1';
+function loadEmployees(){ try{ return JSON.parse(localStorage.getItem(STORE_KEY))||[]; }catch(e){ return []; } }
+function saveEmployees(list){ localStorage.setItem(STORE_KEY, JSON.stringify(list)); }
+
+/* ============================================================
+   WORKING DATABASE (EXCEL) FILE — shown in the bar at the top
+   ============================================================ */
+const DBFILE_KEY = 'tbps_satara_dbfile_meta';
+function nowStamp(){
+  const d = new Date(), p = n => String(n).padStart(2,'0');
+  return `${fmt(d)} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+/* The name used for the database backup workbook (kept in sync with the backup button). */
+function dbBackupFileName(){
+  return `TBP_Satara_Database_Backup_${fmt(new Date()).replace(/\//g,'-')}.xlsx`;
+}
+function loadDbFileMeta(){ try{ return JSON.parse(localStorage.getItem(DBFILE_KEY))||{}; }catch(e){ return {}; } }
+function saveDbFileMeta(m){ try{ localStorage.setItem(DBFILE_KEY, JSON.stringify(m)); }catch(e){} }
+function renderDbFileBar(){
+  const nameEl = document.getElementById('dbfile-name');
+  if(!nameEl) return;
+  nameEl.textContent = dbBackupFileName();
+  document.getElementById('dbfile-loc').textContent = 'ब्राउझरचे डाउनलोड फोल्डर (डाउनलोड्स)';
+  const m = loadDbFileMeta(), parts = [];
+  parts.push(`एकूण नोंदी: ${EMPLOYEES.length}`);
+  if(m.lastBackupName) parts.push(`शेवटचा बॅकअप: ${m.lastBackupName} (${m.lastBackupAt||'—'})`);
+  if(m.lastRestoreName) parts.push(`शेवटचे पुनर्संचयन: ${m.lastRestoreName} (${m.lastRestoreAt||'—'})`);
+  document.getElementById('dbfile-last').textContent = parts.join('  |  ');
+}
+let EMPLOYEES = loadEmployees();
+let EDIT_ID = null;
+
+/* ============================================================
+   TAB NAVIGATION
+   ============================================================ */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+    if(btn.dataset.tab==='list') renderList();
+    if(btn.dataset.tab==='results') renderResults();
+    if(btn.dataset.tab==='discrepancy') renderDiscrepancyReport();
+    window.scrollTo({top:0, behavior:'smooth'});   // each tab opens at its top
+  });
+});
+
+/* ============================================================
+   ENTRY FORM — dynamic cadre dropdown & conditional fields
+   ============================================================ */
+const classSel = document.getElementById('f_class');
+const cadreSel = document.getElementById('f_cadre');
+classSel.addEventListener('change', ()=>{
+  const cls = classSel.value;
+  cadreSel.innerHTML = '<option value="">-- निवडा --</option>';
+  Object.entries(CADRES).filter(([k,c])=>String(c.cls)===cls).forEach(([k,c])=>{
+    const opt = document.createElement('option'); opt.value=k; opt.textContent=c.label; cadreSel.appendChild(opt);
+  });
+  toggleClassFields(cls);
+  toggleTypewriting();
+  toggleDriverFields();
+});
+cadreSel.addEventListener('change', toggleTypewriting);
+cadreSel.addEventListener('change', toggleDriverFields);
+function toggleClassFields(cls){
+  document.querySelectorAll('.cadre3-only').forEach(el=> el.style.display = (cls==='3') ? '' : 'none');
+}
+function toggleTypewriting(){
+  const c = CADRES[cadreSel.value];
+  document.querySelectorAll('.cadre-typewriting').forEach(el=> el.style.display = (c && c.typewriting) ? '' : 'none');
+}
+function toggleDriverFields(){
+  const c = CADRES[cadreSel.value];
+  const isDriver = !!(c && c.reducedClass3);   // Driver cadre: no language/computer/SSD/QT requirements
+  const show = classSel.value==='3' && !isDriver;   // these fields are Class-3-only to begin with, and additionally hidden for Driver within Class-3
+  document.querySelectorAll('.class3-not-driver').forEach(el=> el.style.display = show ? '' : 'none');
+}
+document.querySelectorAll('input[name=f_training_nominated]').forEach(r=>{
+  r.addEventListener('change', ()=>{
+    document.getElementById('wrap_training_done').style.display = (document.querySelector('input[name=f_training_nominated]:checked').value==='yes') ? '' : 'none';
+  });
+});
+document.querySelectorAll('input[name=f_caste_reservation]').forEach(r=>{
+  r.addEventListener('change', ()=>{
+    document.getElementById('wrap_caste_validity').style.display = (document.querySelector('input[name=f_caste_reservation]:checked').value==='yes') ? '' : 'none';
+  });
+});
+
+/* Assets & Liabilities certificate — due-year rule: position as on 31 March of year Y must be
+   submitted by 31 May of year Y. So as of today, the most recently due cycle is:
+   - year(today) if today is on/after 31 May of this year, else year(today)-1. */
+function assetsCertDueYear(today){
+  const y = today.getFullYear();
+  const deadlineThisYear = new Date(y,4,31); // 31 May
+  return today >= deadlineThisYear ? y : y-1;
+}
+function updateAssetsCertStatus(){
+  const el = document.getElementById('assets-cert-status');
+  const input = document.getElementById('f_assets_cert_year');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dueYear = assetsCertDueYear(today);
+  const entered = parseInt(input.value,10);
+  if(!input.value){
+    el.innerHTML = `<span class="status-pill status-warn">प्रलंबित</span> सद्यस्थितीत दि.31/03/${dueYear} स्थितीचे प्रमाणपत्र (दि.31/05/${dueYear} पूर्वी सादर होणे) आवश्यक आहे.`;
+    return;
+  }
+  if(!isNaN(entered) && entered>=dueYear){
+    el.innerHTML = `<span class="status-pill status-ok">अद्ययावत</span> दि.31/03/${entered} स्थितीचे प्रमाणपत्र सादर — सद्यस्थितीत आवश्यक (दि.31/03/${dueYear}) पूर्ण.`;
+  } else {
+    el.innerHTML = `<span class="status-pill status-danger">अपूर्ण</span> सद्यस्थितीत दि.31/03/${dueYear} स्थितीचे प्रमाणपत्र आवश्यक आहे (नोंदवलेले वर्ष: ${input.value||'—'}).`;
+  }
+}
+document.getElementById('f_assets_cert_year').addEventListener('input', updateAssetsCertStatus);
+[1,2,3].forEach(n=>{
+  document.querySelectorAll(`input[name=f_granted${n}]`).forEach(r=>{
+    r.addEventListener('change', ()=>{
+      const show = document.querySelector(`input[name=f_granted${n}]:checked`).value==='yes';
+      document.querySelectorAll(`.granted${n}-fields`).forEach(el=> el.style.display = show?'':'none');
+      refreshCalcUI();
+    });
+  });
+});
+toggleClassFields('');
+toggleDriverFields();
+updateAssetsCertStatus();
+
+/* ---- 55-year review certificate: live applicability check ---- */
+function updateReview55Status(){
+  const statusEl = document.getElementById('review55-status');
+  const dateInput = document.getElementById('f_review55_date');
+  const dob = pd(document.getElementById('f_dob').value);
+  if(!dob){
+    statusEl.innerHTML = 'जन्मतारीख भरल्यानंतर स्थिती आपोआप दिसेल.';
+    dateInput.disabled = false;
+    return;
+  }
+  const today = new Date(); today.setHours(0,0,0,0);
+  const age55Date = addYears(dob,55);
+  const death = pd(document.getElementById('f_death_date').value);
+  const vrs = pd(document.getElementById('f_vrs_date').value);
+  const retirement = computeRetirement(dob,58);
+
+  let na=false, reason='';
+  if(death && death<=today){ na=true; reason='मयत असल्याने लागू नाही'; }
+  else if(vrs && vrs<=today){ na=true; reason='स्वेच्छा सेवानिवृत्त असल्याने लागू नाही'; }
+  else if(retirement && retirement<=today){ na=true; reason='सेवानिवृत्त असल्याने लागू नाही'; }
+  else if(today < age55Date){ na=true; reason=`अद्याप 55 वर्षे पूर्ण झालेली नाहीत (दि. ${fmt(age55Date)} रोजी पूर्ण होतील) — सद्या लागू नाही`; }
+
+  if(na){
+    statusEl.innerHTML = `<span class="status-pill status-muted">लागू नाही</span> ${reason}`;
+    dateInput.disabled = true;
+  } else {
+    const hasDate = !!dateInput.value;
+    statusEl.innerHTML = `<span class="status-pill ${hasDate?'status-ok':'status-warn'}">लागू</span> कर्मचाऱ्याने दि. ${fmt(age55Date)} रोजी 55 वर्षे पूर्ण केली आहेत — पुनर्विलोकन प्रमाणपत्र दिनांक आवश्यक.`;
+    dateInput.disabled = false;
+  }
+}
+['f_dob','f_death_date','f_vrs_date','f_review55_date'].forEach(id=>{
+  document.getElementById(id).addEventListener('change', updateReview55Status);
+  document.getElementById(id).addEventListener('input', updateReview55Status);
+});
+updateReview55Status();
+
+/* ---- CR marks rows: auto-derived from required years only ---- */
+let crMarksDraft = {}; // { fyStartYear: marks }
+
+function readGranted(n){
+  const el = document.querySelector(`input[name=f_granted${n}]:checked`);
+  const granted = el ? el.value==='yes' : false;
+  const dateEl = document.getElementById(`f_granted${n}_date`);
+  const schemeEl = document.getElementById(`f_granted${n}_scheme`);
+  return { granted, date: dateEl ? dateEl.value : '', scheme: schemeEl ? schemeEl.value : undefined };
+}
+
+/* revisionChoice per level: 'accept' (use corrected date) / 'reject' (keep as-issued date) / null (undecided).
+   pendingRevisionChoice holds the value loaded from a saved record until the DOM radios (built dynamically,
+   only when a mismatch is found) exist to read from directly. */
+let pendingRevisionChoice = {1:null, 2:null, 3:null};
+function readRevisionChoice(n){
+  const el = document.querySelector(`input[name=f_revision${n}]:checked`);
+  if(el) return el.value;
+  return pendingRevisionChoice[n];
+}
+
+function buildDraft(){
+  const g1 = readGranted(1), g2 = readGranted(2), g3 = readGranted(3);
+  return {
+    dob: document.getElementById('f_dob').value,
+    join: document.getElementById('f_join').value,
+    cadre: cadreSel.value,
+    qtDate: document.getElementById('f_qt_date').value,
+    fpdActual: promoStatusFromForm(PROMO_TOGGLES[0])==='done' ? document.getElementById('f_fpd_actual').value : '',
+    spdActual: promoStatusFromForm(PROMO_TOGGLES[1])==='done' ? document.getElementById('f_spd_actual').value : '',
+    tpdActual: promoStatusFromForm(PROMO_TOGGLES[2])==='done' ? document.getElementById('f_tpd_actual').value : '',
+    fpdDone: promoStatusFromForm(PROMO_TOGGLES[0]),
+    spdDone: promoStatusFromForm(PROMO_TOGGLES[1]),
+    tpdDone: promoStatusFromForm(PROMO_TOGGLES[2]),
+    granted1: g1.granted, granted1Date: g1.date, granted1Scheme: g1.scheme, revisionChoice1: readRevisionChoice(1),
+    granted2: g2.granted, granted2Date: g2.date, granted2Scheme: g2.scheme, revisionChoice2: readRevisionChoice(2),
+    granted3: g3.granted, granted3Date: g3.date, revisionChoice3: readRevisionChoice(3),
+  };
+}
+
+const SCHEME_LABEL = { otbps:'OTBPS (जुनी योजना)', raps:'RAPS (सुधारित योजना)' };
+
+/* Human-readable text for the actual-promotion status ('done' | 'notdone' | '' = not stated). */
+function promoStatusText(st){
+  if(st==='done') return 'झाली (दिनांक नोंदवला)';
+  if(st==='notdone') return 'झाली नाही';
+  return '⚠️ नमूद केलेले नाही';
+}
+
+function renderGrantedVerify(n, verify){
+  const wrap = document.getElementById(`wrap_granted${n}_verify`);
+  const box = document.getElementById(`granted${n}-verify-box`);
+  if(!wrap || !box) return;
+  if(!verify || !verify.isMarkedGranted){ wrap.style.display='none'; box.innerHTML=''; return; }
+  wrap.style.display='';
+
+  const schemeWrong = verify.schemeMatches===false;
+  const schemeNote = schemeWrong
+    ? `<br>⚠️ नोंदवलेली योजना (<b>${SCHEME_LABEL[verify.recordedScheme]||verify.recordedScheme}</b>) चुकीची दिसते — नियमानुसार योग्य योजना <b>${SCHEME_LABEL[verify.correctSchemeKey]}</b> आहे.`
+    : '';
+
+  if(verify.matches){
+    if(schemeWrong){
+      box.innerHTML = `<div class="flagbox">✅ नोंदवलेला मंजुरी दिनांक (दि. ${fmt(verify.recordedDate)}) योग्य आहे.${schemeNote}<br><span class="hint">(दिनांक बरोबर असल्याने पुढील गणनेवर परिणाम होत नाही — फक्त नोंदीतील योजनेचे नाव दुरुस्त करावे.)</span></div>`;
+    } else {
+      box.innerHTML = `<div class="flagbox" style="border-left-color:var(--ok);background:var(--ok-bg);color:var(--ok);">✅ नोंदवलेला मंजुरी दिनांक (दि. ${fmt(verify.recordedDate)}) व योजना नियमानुसार योग्य आहे.</div>`;
+    }
+    return;
+  }
+  const chosen = verify.revisionChoice;
+  box.innerHTML = `<div class="flagbox">⚠️ नोंदवलेला मंजुरी दिनांक (दि. ${fmt(verify.recordedDate)}) नियमानुसार <b>योग्य दिसत नाही</b>. नियमांप्रमाणे योग्य/सुधारित दिनांक <b>दि. ${fmt(verify.correctDate)}</b> (${verify.correctScheme}) असायला हवा.${schemeNote}
+    <div class="yn" style="margin-top:8px;flex-direction:column;align-items:flex-start;gap:6px;">
+      <label><input type="radio" name="f_revision${n}" value="accept" ${chosen==='accept'?'checked':''}> सुधारित (योग्य) दिनांक स्वीकारा — पुढील संपूर्ण गणना सुधारित दिनांकानुसार होईल</label>
+      <label><input type="radio" name="f_revision${n}" value="reject" ${chosen==='reject'?'checked':''}> पूर्वीचाच नोंदवलेला दिनांक कायम ठेवा — पुढील गणना जुन्याच दिनांकानुसार होईल</label>
+    </div>
+    ${!chosen ? '<div style="margin-top:6px;color:var(--danger);font-weight:700;">❗ निर्णय प्रलंबित — कृपया वरीलपैकी एक पर्याय निवडा. निर्णय होईपर्यंत प्रणाली तात्पुरती सुधारित दिनांक वापरून पुढील गणना करेल.</div>' : ''}</div>`;
+  box.querySelectorAll(`input[name=f_revision${n}]`).forEach(r=>{
+    r.addEventListener('change', refreshCalcUI);
+  });
+}
+
+function renderEligibilityFlag(n, lvl){
+  const el = document.getElementById(`granted${n}-eligibility-flag`);
+  if(!el) return;
+  if(!lvl){ el.innerHTML=''; return; }
+  if(!lvl.due){
+    el.innerHTML = `<span class="status-pill status-muted">⚠️ पात्र नाही</span> नियमित ${n===1?'प्रथम':n===2?'द्वितीय':'तृतीय'} पदोन्नती वेळेत मिळाल्याने हा कर्मचारी लाभ-${n} साठी पात्र नाही.`;
+  } else {
+    el.innerHTML = '';
+  }
+}
+
+function updateGrantedVerificationUI(draft){
+  if(!draft.dob || !draft.join){
+    [1,2,3].forEach(n=>{ renderGrantedVerify(n,null); renderEligibilityFlag(n,null); });
+    return;
+  }
+  const chain = computeChain(draft);
+  if(!chain){
+    [1,2,3].forEach(n=>{ renderGrantedVerify(n,null); renderEligibilityFlag(n,null); });
+    return;
+  }
+  renderGrantedVerify(1, chain.lvl1.verify);
+  renderGrantedVerify(2, chain.lvl2.verify);
+  renderGrantedVerify(3, chain.lvl3.verify);
+  renderEligibilityFlag(1, chain.lvl1);
+  renderEligibilityFlag(2, chain.lvl2);
+  renderEligibilityFlag(3, chain.lvl3);
+}
+
+function refreshCRFields(draft){
+  const body = document.getElementById('cr-rows');
+  const help = document.getElementById('cr-help');
+  body.innerHTML = '';
+
+  if(!draft.dob || !draft.join || !draft.cadre){
+    help.textContent = 'जन्मतारीख, रुजू तारीख व पद निवडल्यानंतर आवश्यक वर्षे आपोआप दिसतील.';
+    return;
+  }
+  const chain = computeChain(draft);
+  if(!chain) return;
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  let neededSet = new Set();
+  [chain.lvl1, chain.lvl2, chain.lvl3].forEach(lvl=>{
+    const alreadyCorrectlyGranted = lvl.verify && lvl.verify.matches===true;
+    if(lvl.due && lvl.date && lvl.date<=today && !alreadyCorrectlyGranted){   // only currently-pending (due, not yet correctly granted) benefits
+      const fyB = fyOf(lvl.date);
+      for(let i=5;i>=1;i--) neededSet.add(fyB-i);
+    }
+  });
+  const years = [...neededSet].sort((a,b)=>a-b);
+  if(!years.length){
+    help.textContent = 'या कर्मचाऱ्यासाठी सद्यस्थितीत कोणताही लाभ प्रलंबित (pending) नाही — त्यामुळे गोपनीय अहवाल गुणांची आवश्यकता नाही. (नियमित पदोन्नती वेळेत झाली आहे, सर्व देय लाभ यापूर्वीच योग्यरित्या मंजूर झाले आहेत, किंवा देय लाभाची तारीख अद्याप भविष्यात आहे.)';
+    return;
+  }
+  help.textContent = `सद्या प्रलंबित (pending) असलेल्या लाभांच्या तारखांनुसार खालील ${years.length} आर्थिक वर्षांचे गुण आवश्यक आहेत (आपोआप निवडलेले):`;
+  years.forEach(fy=>{
+    const tr = document.createElement('tr');
+    const val = crMarksDraft[fy]!==undefined ? crMarksDraft[fy] : '';
+    tr.innerHTML = `<td>${fy}-${String(fy+1).slice(2)} (01/04/${fy} ते 31/03/${fy+1})</td>
+      <td><input type="number" step="0.1" min="0" max="5" class="cr-marks-input" data-fy="${fy}" value="${val}" style="width:100%"></td>`;
+    tr.querySelector('.cr-marks-input').addEventListener('input', (e)=>{
+      const v = parseFloat(e.target.value);
+      if(!isNaN(v)) crMarksDraft[fy]=v; else delete crMarksDraft[fy];
+    });
+    body.appendChild(tr);
+  });
+}
+
+function refreshCalcUI(){
+  const draft = buildDraft();
+  refreshCRFields(draft);
+  updateGrantedVerificationUI(draft);
+}
+/* ---- Actual-promotion status: for each of the three promotions the user must pick either
+   "पदोन्नती झाली" (done) or "पदोन्नती झाली नाही" (not done). Leaving BOTH unchecked is allowed but is
+   recorded as "not stated" ('' ) and raised as a flag in every report. The date field is only enabled
+   (and required) when "done" is selected. ---- */
+const PROMO_TOGGLES = [
+  { done:'f_fpd_done', notdone:'f_fpd_notdone', date:'f_fpd_actual', wrap:'wrap_fpd_date', key:'fpdDone' },
+  { done:'f_spd_done', notdone:'f_spd_notdone', date:'f_spd_actual', wrap:'wrap_spd_date', key:'spdDone' },
+  { done:'f_tpd_done', notdone:'f_tpd_notdone', date:'f_tpd_actual', wrap:'wrap_tpd_date', key:'tpdDone' },
+];
+function promoStatusFromForm(t){
+  const done = document.getElementById(t.done).checked;
+  const notdone = document.getElementById(t.notdone).checked;
+  if(done) return 'done';
+  if(notdone) return 'notdone';
+  return '';                      // not stated
+}
+function setPromoStatus(t, status){
+  document.getElementById(t.done).checked = (status==='done');
+  document.getElementById(t.notdone).checked = (status==='notdone');
+  const dateEl = document.getElementById(t.date);
+  const wrap = t.wrap ? document.getElementById(t.wrap) : null;
+  const showDate = (status==='done');
+  dateEl.disabled = !showDate;
+  if(wrap) wrap.style.display = showDate ? '' : 'none';   // date field appears only for "पदोन्नती झाली"
+  if(!showDate) dateEl.value='';                          // no date without a "done" selection
+}
+function wirePromoToggles(){
+  PROMO_TOGGLES.forEach(t=>{
+    const doneEl = document.getElementById(t.done), notEl = document.getElementById(t.notdone), dateEl = document.getElementById(t.date);
+    /* Exactly one of the two is always selected, and "पदोन्नती झाली नाही" is the default:
+       - untick "झाली नाही"  -> "झाली" is auto-selected and the date field opens.
+       - untick "झाली"       -> "झाली नाही" is auto-selected again and the date field closes. */
+    const wrap = t.wrap ? document.getElementById(t.wrap) : null;
+    const showDate = ()=> { if(wrap) wrap.style.display=''; dateEl.disabled=false; };
+    const hideDate = ()=> { if(wrap) wrap.style.display='none'; dateEl.disabled=true; dateEl.value=''; };
+    doneEl.addEventListener('change', ()=>{
+      if(doneEl.checked){ notEl.checked = false; showDate(); }
+      else { notEl.checked = true; hideDate(); }
+      refreshCalcUI();
+    });
+    notEl.addEventListener('change', ()=>{
+      if(notEl.checked){ doneEl.checked = false; hideDate(); }
+      else { doneEl.checked = true; showDate(); }
+      refreshCalcUI();
+    });
+  });
+}
+wirePromoToggles();
+
+['f_dob','f_join','f_fpd_actual','f_spd_actual','f_tpd_actual','f_qt_date'].forEach(id=>{
+  document.getElementById(id).addEventListener('change', refreshCalcUI);
+});
+cadreSel.addEventListener('change', refreshCalcUI);
+['f_granted1_date','f_granted1_scheme','f_granted2_date','f_granted2_scheme','f_granted3_date'].forEach(id=>{
+  document.getElementById(id).addEventListener('change', refreshCalcUI);
+});
+
+/* ---- Save / Clear ---- */
+function getRadio(name){ const el=document.querySelector(`input[name=${name}]:checked`); return el ? el.value==='yes' : false; }
+function setRadio(name,val){ const el=document.querySelector(`input[name=${name}][value=${val?'yes':'no'}]`); if(el) el.checked=true; }
+
+function clearForm(){
+  EDIT_ID = null;
+  document.getElementById('entry-title').textContent='नवीन कर्मचारी नोंद';
+  ['f_name','f_empno','f_office','f_dob','f_join','f_fpd_actual','f_spd_actual','f_tpd_actual','f_ssd_date','f_qt_date','f_review55_date','f_death_date','f_vrs_date','f_granted1_date','f_granted2_date','f_granted3_date','f_assets_cert_year','f_remarks'].forEach(id=>document.getElementById(id).value='');
+  classSel.value=''; cadreSel.innerHTML='<option value="">-- आधी वर्ग निवडा --</option>';
+  toggleClassFields('');
+  toggleDriverFields();
+  ['f_permanency','f_lang','f_computer','f_typewriting','f_training_nominated','f_training_done','f_inquiry_ongoing','f_punishment_ongoing','f_absence','f_integrity','f_granted1','f_granted2','f_granted3','f_caste_reservation','f_caste_validity'].forEach(n=>setRadio(n,false));
+  document.getElementById('wrap_training_done').style.display='none';
+  document.getElementById('wrap_caste_validity').style.display='none';
+  [1,2,3].forEach(n=> document.querySelectorAll(`.granted${n}-fields`).forEach(el=> el.style.display='none'));
+  document.getElementById('f_granted1_scheme').value='otbps';
+  document.getElementById('f_granted2_scheme').value='otbps';
+  pendingRevisionChoice = {1:null, 2:null, 3:null};
+  PROMO_TOGGLES.forEach(t=> setPromoStatus(t, 'notdone'));   // default: "पदोन्नती झाली नाही" selected
+  crMarksDraft = {};
+  refreshCalcUI();
+  updateReview55Status();
+  updateAssetsCertStatus();
+}
+document.getElementById('btn-clear-emp').addEventListener('click', clearForm);
+
+function collectForm(){
+  const cr = Object.entries(crMarksDraft).map(([fy,marks])=>({ fy:parseInt(fy,10), marks }));
+  const g1 = readGranted(1), g2 = readGranted(2), g3 = readGranted(3);
+
+  return {
+    id: EDIT_ID || ('emp_'+Date.now()),
+    name: document.getElementById('f_name').value.trim(),
+    empno: document.getElementById('f_empno').value.trim(),
+    office: document.getElementById('f_office').value.trim(),
+    cls: classSel.value,
+    cadre: cadreSel.value,
+    dob: document.getElementById('f_dob').value,
+    join: document.getElementById('f_join').value,
+    fpdActual: promoStatusFromForm(PROMO_TOGGLES[0])==='done' ? document.getElementById('f_fpd_actual').value : '',
+    spdActual: promoStatusFromForm(PROMO_TOGGLES[1])==='done' ? document.getElementById('f_spd_actual').value : '',
+    tpdActual: promoStatusFromForm(PROMO_TOGGLES[2])==='done' ? document.getElementById('f_tpd_actual').value : '',
+    fpdDone: promoStatusFromForm(PROMO_TOGGLES[0]),
+    spdDone: promoStatusFromForm(PROMO_TOGGLES[1]),
+    tpdDone: promoStatusFromForm(PROMO_TOGGLES[2]),
+    granted1: g1.granted, granted1Date: g1.date, granted1Scheme: g1.scheme, revisionChoice1: readRevisionChoice(1),
+    granted2: g2.granted, granted2Date: g2.date, granted2Scheme: g2.scheme, revisionChoice2: readRevisionChoice(2),
+    granted3: g3.granted, granted3Date: g3.date, revisionChoice3: readRevisionChoice(3),
+    permanency: getRadio('f_permanency'),
+    casteReservation: getRadio('f_caste_reservation'),
+    casteValidity: getRadio('f_caste_validity'),
+    assetsCertYear: document.getElementById('f_assets_cert_year').value.trim(),
+    lang: getRadio('f_lang'),
+    computer: getRadio('f_computer'),
+    typewriting: getRadio('f_typewriting'),
+    ssdDate: document.getElementById('f_ssd_date').value,
+    qtDate: document.getElementById('f_qt_date').value,
+    trainingNominated: getRadio('f_training_nominated'),
+    trainingDone: getRadio('f_training_done'),
+    review55Date: document.getElementById('f_review55_date').value,
+    inquiryOngoing: getRadio('f_inquiry_ongoing'),
+    punishmentOngoing: getRadio('f_punishment_ongoing'),
+    absence: getRadio('f_absence'),
+    integrity: getRadio('f_integrity'),
+    deathDate: document.getElementById('f_death_date').value,
+    vrsDate: document.getElementById('f_vrs_date').value,
+    remarks: document.getElementById('f_remarks').value.trim(),
+    cr: cr
+  };
+}
+
+function refreshOfficeDatalist(){
+  const dl = document.getElementById('office-datalist');
+  const offices = [...new Set(EMPLOYEES.map(e=>e.office).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'mr'));
+  dl.innerHTML = offices.map(o=>`<option value="${o.replace(/"/g,'&quot;')}">`).join('');
+}
+
+document.getElementById('btn-save-emp').addEventListener('click', ()=>{
+  const emp = collectForm();
+  if(!emp.name || !emp.cls || !emp.cadre){
+    alert('कृपया नाव, वर्ग व पद ही आवश्यक माहिती भरा.');
+    return;
+  }
+  const missingDateParts = [];
+  if(!emp.dob) missingDateParts.push('जन्मतारीख');
+  if(!emp.join) missingDateParts.push('रुजू तारीख');
+  // A promotion marked "done" must carry its date — this is the check that stops the dates being forgotten.
+  const promoMissing = [];
+  [['fpdDone','fpdActual','प्रथम'], ['spdDone','spdActual','द्वितीय'], ['tpdDone','tpdActual','तृतीय']].forEach(([sk,dk,label])=>{
+    if(emp[sk]==='done' && !emp[dk]) promoMissing.push(label);
+  });
+  if(promoMissing.length){
+    alert(`खालील पदोन्नती "झाली" असे नमूद केले आहे, परंतु तिचा दिनांक भरलेला नाही — कृपया दिनांक भरा:\n- ${promoMissing.join('\n- ')} पदोन्नती दिनांक`);
+    return;
+  }
+  // A benefit marked "यापूर्वी मंजूर" (already granted) must carry its grant date.
+  const grantedMissing = [];
+  [[emp.granted1, emp.granted1Date, 'लाभ-1'], [emp.granted2, emp.granted2Date, 'लाभ-2'], [emp.granted3, emp.granted3Date, 'लाभ-3']].forEach(([g,d,label])=>{
+    if(g && !d) grantedMissing.push(label);
+  });
+  if(grantedMissing.length){
+    alert(`खालील लाभ "यापूर्वी मंजूर झाला आहे" असे नमूद केले आहे, परंतु त्याचा मंजुरी दिनांक भरलेला नाही — कृपया दिनांक भरा:\n- ${grantedMissing.join('\n- ')} मंजुरी दिनांक`);
+    return;
+  }
+  const idx = EMPLOYEES.findIndex(e=>e.id===emp.id);
+  emp.updatedAt = Date.now();     // used to show the most recently saved record first in "निकाल व गणना"
+  if(idx>=0) EMPLOYEES[idx]=emp; else EMPLOYEES.push(emp);
+  saveEmployees(EMPLOYEES);
+  refreshOfficeDatalist();
+  renderDiscrepancyReport();   // keep this report fresh even if the tab isn't currently open
+  renderDbFileBar();
+  clearForm();
+  // Take the user straight to the computed results so they immediately see the outcome of their entry.
+  const resultsTabBtn = document.querySelector('.tab-btn[data-tab="results"]');
+  if(resultsTabBtn) resultsTabBtn.click();
+  alert(missingDateParts.length
+    ? `कर्मचारी माहिती जतन झाली.\n\n⚠️ ${missingDateParts.join(' व ')} नमूद नसल्याने या नोंदीसाठी लाभ गणना व पात्रता तपासणी केली जाणार नाही — निकाल, त्रुटी अहवाल व निर्यातींमध्ये या नोंदीवर "माहिती अपूर्ण" ध्वज दर्शवला जाईल.`
+    : 'कर्मचारी माहिती जतन झाली.');
+  // The saved record is the first row of निकाल व गणना — scroll to the top so it is visible at once.
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+function loadIntoForm(emp){
+  const dmy = v => { const d = pd(v); return d ? fmt(d) : ''; };   // normalizes any stored date (old ISO or dd/mm/yyyy) to dd/mm/yyyy for display
+  EDIT_ID = emp.id;
+  document.getElementById('entry-title').textContent = 'संपादन: '+emp.name;
+  document.getElementById('f_name').value=emp.name;
+  document.getElementById('f_empno').value=emp.empno||'';
+  document.getElementById('f_office').value=emp.office||'';
+  classSel.value=emp.cls;
+  classSel.dispatchEvent(new Event('change'));
+  cadreSel.value=emp.cadre;
+  toggleTypewriting();
+  toggleDriverFields();
+  document.getElementById('f_dob').value=dmy(emp.dob);
+  document.getElementById('f_join').value=dmy(emp.join);
+  document.getElementById('f_fpd_actual').value=dmy(emp.fpdActual);
+  document.getElementById('f_spd_actual').value=dmy(emp.spdActual);
+  document.getElementById('f_tpd_actual').value=dmy(emp.tpdActual);
+  // Records saved before this feature have no status field — treat a present date as "done", otherwise "not stated".
+  const legacyPromo = (st, dateVal) => (st==='done'||st==='notdone') ? st : (dateVal ? 'done' : 'notdone');
+  setPromoStatus(PROMO_TOGGLES[0], legacyPromo(emp.fpdDone, emp.fpdActual));
+  setPromoStatus(PROMO_TOGGLES[1], legacyPromo(emp.spdDone, emp.spdActual));
+  setPromoStatus(PROMO_TOGGLES[2], legacyPromo(emp.tpdDone, emp.tpdActual));
+  setRadio('f_granted1', emp.granted1);
+  document.getElementById('f_granted1_date').value = dmy(emp.granted1Date);
+  document.getElementById('f_granted1_scheme').value = emp.granted1Scheme||'otbps';
+  document.querySelectorAll('.granted1-fields').forEach(el=> el.style.display = emp.granted1 ? '' : 'none');
+  setRadio('f_granted2', emp.granted2);
+  document.getElementById('f_granted2_date').value = dmy(emp.granted2Date);
+  document.getElementById('f_granted2_scheme').value = emp.granted2Scheme||'otbps';
+  document.querySelectorAll('.granted2-fields').forEach(el=> el.style.display = emp.granted2 ? '' : 'none');
+  setRadio('f_granted3', emp.granted3);
+  document.getElementById('f_granted3_date').value = dmy(emp.granted3Date);
+  document.querySelectorAll('.granted3-fields').forEach(el=> el.style.display = emp.granted3 ? '' : 'none');
+  setRadio('f_permanency',emp.permanency);
+  setRadio('f_caste_reservation', emp.casteReservation);
+  setRadio('f_caste_validity', emp.casteValidity);
+  document.getElementById('wrap_caste_validity').style.display = emp.casteReservation ? '' : 'none';
+  document.getElementById('f_assets_cert_year').value = emp.assetsCertYear||'';
+  updateAssetsCertStatus();
+  setRadio('f_lang',emp.lang);
+  setRadio('f_computer',emp.computer);
+  setRadio('f_typewriting',emp.typewriting);
+  document.getElementById('f_ssd_date').value=dmy(emp.ssdDate);
+  document.getElementById('f_qt_date').value=dmy(emp.qtDate);
+  setRadio('f_training_nominated',emp.trainingNominated);
+  document.getElementById('wrap_training_done').style.display= emp.trainingNominated ? '' : 'none';
+  setRadio('f_training_done',emp.trainingDone);
+  document.getElementById('f_review55_date').value=dmy(emp.review55Date);
+  setRadio('f_inquiry_ongoing',emp.inquiryOngoing);
+  setRadio('f_punishment_ongoing',emp.punishmentOngoing);
+  setRadio('f_absence',emp.absence);
+  setRadio('f_integrity',emp.integrity);
+  document.getElementById('f_death_date').value=dmy(emp.deathDate);
+  document.getElementById('f_vrs_date').value=dmy(emp.vrsDate);
+  document.getElementById('f_remarks').value = emp.remarks||'';
+  crMarksDraft = {};
+  (emp.cr||[]).forEach(r=> crMarksDraft[r.fy]=r.marks);
+  pendingRevisionChoice = {1: emp.revisionChoice1||null, 2: emp.revisionChoice2||null, 3: emp.revisionChoice3||null};
+  refreshCalcUI();
+  updateReview55Status();
+  document.querySelector('.tab-btn[data-tab="entry"]').click();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ============================================================
+   LIST PANEL
+   ============================================================ */
+function renderList(){
+  const body = document.getElementById('emp-list-body');
+  const q = (document.getElementById('list-search').value||'').trim().toLowerCase();
+  const rows = EMPLOYEES.filter(e=> e.name.toLowerCase().includes(q));
+  body.innerHTML='';
+  document.getElementById('list-empty').style.display = rows.length? 'none':'block';
+  rows.forEach(emp=>{
+    const c = CADRES[emp.cadre];
+    const tr = document.createElement('tr');
+    const incompleteMark = (!emp.dob || !emp.join) ? ' <span class="status-pill status-warn">⚠️ माहिती अपूर्ण</span>' : '';
+    tr.innerHTML = `<td>${emp.name}${incompleteMark}</td><td>वर्ग-${emp.cls}</td><td>${c?c.label:emp.cadre}</td><td>${fmt(pd(emp.dob))}</td><td>${fmt(pd(emp.join))}</td>
+      <td><button class="btn small secondary btn-edit">संपादन</button> <button class="btn small danger btn-del">काढून टाका</button></td>`;
+    tr.querySelector('.btn-edit').addEventListener('click', ()=>loadIntoForm(emp));
+    tr.querySelector('.btn-del').addEventListener('click', ()=>{
+      if(confirm(`"${emp.name}" ची नोंद कायमची काढून टाकायची आहे का?`)){
+        EMPLOYEES = EMPLOYEES.filter(e=>e.id!==emp.id);
+        saveEmployees(EMPLOYEES);
+        renderList();
+        renderDiscrepancyReport();
+        renderDbFileBar();
+      }
+    });
+    body.appendChild(tr);
+  });
+}
+document.getElementById('list-search').addEventListener('input', renderList);
+
+/* ============================================================
+   CALCULATION ENGINE
+   ============================================================ */
+function crAverageForWindow(cr, benefitDate){
+  // 5 FYs ending immediately before the FY containing benefitDate
+  const fyOfBenefit = fyOf(benefitDate);
+  const neededFYs = [fyOfBenefit-5, fyOfBenefit-4, fyOfBenefit-3, fyOfBenefit-2, fyOfBenefit-1];
+  const found = neededFYs.map(fy => { const r = cr.find(x=>x.fy===fy); return r? r.marks : null; });
+  const missing = found.filter(v=>v===null).length;
+  const present = found.filter(v=>v!==null);
+  const avg = present.length ? (present.reduce((a,b)=>a+b,0)/present.length) : null;
+  return { neededFYs, found, missing, avg };
+}
+
+/* Builds the per-employee, per-benefit CR breakdown (5 FYs + average) used by both the Excel and PDF exports. */
+function buildCRDetailBlocks(){
+  const blocks = [];
+  EMPLOYEES.forEach(emp=>{
+    if(!pd(emp.dob) || !pd(emp.join)) return;   // no calculation on records with missing vital dates
+    const chain = computeChain(emp);
+    if(!chain) return;
+    const c = CADRES[emp.cadre]||{};
+    [['लाभ-1', chain.lvl1], ['लाभ-2', chain.lvl2], ['लाभ-3', chain.lvl3]].forEach(([label, lvl])=>{
+      if(!lvl.due) return;
+      const crCheck = crAverageForWindow(emp.cr||[], lvl.date);
+      blocks.push({
+        empName: emp.name, cadreLabel: c.label||emp.cadre, benefitLabel: label, benefitDate: lvl.date,
+        years: crCheck.neededFYs.map((fy,idx)=>({ fy, marks: crCheck.found[idx] })),
+        avg: crCheck.avg, missing: crCheck.missing
+      });
+    });
+  });
+  return blocks;
+}
+
+/* ---- Level 1: First Benefit ----
+   OTBPS = join+12y (if that lands before 1 Jan 2016, it stands as granted).
+   Else revised to RAPS: join+10y ("Revised OTBPS IN RAPS First Benefit Date-JD+10"), economic floor at 2016. */
+/* ---- Level 1: First Benefit ----
+   A11-OTBPS First Benefit-12: join+12y, if that lands before 1 Jan 2016 — stands as granted.
+   Else revised to RAPS +10y from join — labeled B11 (native, employee joined during/after the RAPS
+   regime so OTBPS was never really in play) or B12 (converted — joined before RAPS_START, so the old
+   12-year OTBPS rule was technically in line before being revised), with the 2016 economic floor. */
+/* ---- Level 1: First Benefit ----
+   A1.1.0-OTBPS First Benefit-FJ+12: join+12y, if that lands before 1 Jan 2016 — stands as granted.
+   Else revised to RAPS +10y from join:
+     - joined during/after the RAPS regime (no OTBPS entitlement ever existed) -> B1.1.0 (native).
+     - joined before RAPS_START but the 12-year mark falls on/after 1 Jan 2016 -> the source document
+       gives this exact population TWO separate official codes: "B1.2.1-RAPS First Regular
+       Benefit-FJ+10(<1JAN2016)" (framed as an extension of B1.1.0's eligibility) and
+       "B1.3.0-Revised OTBPS IN RAPS First Benefit Date-FJ+10" (framed as an OTBPS-to-RAPS
+       conversion). Both produce the identical formula/date, so both codes are shown together
+       rather than arbitrarily picking one.
+   QT integrated directly here (not as a later patch): if the employee's QT passing/exemption date is
+   later than whatever date was just computed, the benefit is pushed to the QT date and the code gets
+   a "+Q" suffix (A1.1.1 / B1.1.1 / B1.2.2+B1.3.1). Only applies for cadres where qtOverride is set. */
+function computeLevel1(join, actualFPD, qtDate, qtOverrideApplicable, qtExemptBefore){
+  const cand12 = addYears(join,12);
+  const useOld = cand12 < RAPS_START;
+  const checkDate = useOld ? cand12 : addYears(join,10);
+  if(actualFPD && actualFPD <= checkDate){
+    // joinCand12Native: whether THIS employee's own join+12 mark falls on/after 1 Jan 2016 — carried
+    // forward so level-2 can pick between B2.1.0 (FP<10Y) and B2.1.1 (FP<12Y) per the exact join-based test.
+    return { due:false, nextBase:actualFPD, nextBaseType:'actual_promotion', joinCand12Native: !useOld };
+  }
+  let date, type, baseScheme;
+  if(useOld){
+    date = cand12; type = 'otbps_first'; baseScheme = 'A1.1.0-OTBPS First Benefit-FJ+12';
+  } else {
+    date = addYears(join,10);
+    const nativeRAPS = join >= RAPS_START; // joined during RAPS regime — never had an OTBPS entitlement at all
+    type = nativeRAPS ? 'raps_first_native' : 'raps_first_converted';
+    baseScheme = nativeRAPS ? 'B1.1.0-RAPS First Regular Benefit-FJ+10' : 'B1.2.1/B1.3.0-RAPS First Regular Benefit-FJ+10(<1JAN2016) / Revised OTBPS IN RAPS First Benefit Date-FJ+10';
+  }
+  let qtApplied = false;
+  // QT only pushes the date forward if it's later AND this benefit's (pre-QT) date isn't itself exempt
+  // (e.g. Talathi cadre: QT wasn't mandatory at all for a benefit falling before 29 Oct 1997).
+  const qtWasMandatoryForThisBenefit = !qtExemptBefore || date >= qtExemptBefore;
+  if(qtOverrideApplicable && qtWasMandatoryForThisBenefit && qtDate && qtDate > date){ date = qtDate; qtApplied = true; }
+  const economic = (type!=='otbps_first' && date < RAPS_START) ? new Date(RAPS_START.getTime()) : date;
+  let scheme = baseScheme;
+  if(qtApplied){
+    scheme = type==='otbps_first' ? 'A1.1.1-OTBPS First Benefit-FJ+12+Q'
+           : type==='raps_first_native' ? 'B1.1.1-RAPS First Regular Benefit-FJ+10+Q'
+           : 'B1.2.2/B1.3.1-RAPS First Regular Benefit-FJ+10+(1J16)Q / Revised OTBPS IN RAPS First Benefit Date-FJ+10+Q';
+  }
+  return { due:true, date, economicDate:economic, scheme, type, qtOverridden:qtApplied, floored: economic.getTime()!==date.getTime(), nextBase:date, nextBaseType:type };
+}
+
+/* ---- Level 2: Second Benefit ----
+   Base from level-1's first-benefit date (native B1.1.x or converted B1.2.x/B1.3.x) -> directly +10y:
+     B2.2.0-RAPS Second Regular Benefit-FB+10 (base was native), or
+     B2.4.0-RAPS Second Regular Benefit-FB12To10Rev-FB+10 (base was converted) — 2016 floor applied.
+   Base = 'otbps_first' (A1.1.x)   -> OTBPS second benefit = base+12y (A2.1.0-...FB+12); if that crosses
+                                        2016, revised to base+8y (B2.3.0-...Date-12+8), floor at 2016.
+   Base = 'actual_promotion' (FP)  -> first checked against the pure-OTBPS FP+12 rule (A2.1.1-...FP+12,
+                                        if that itself already lands before 2016). Otherwise RAPS applies,
+                                        and which of the two RAPS codes is used is decided by the
+                                        EMPLOYEE'S OWN join+12 mark (joinCand12Native, from level-1) —
+                                        not by the promotion date itself:
+                                          joinCand12Native  -> B2.1.0-...FP+10(FP<10Y): "in time" for the
+                                            second promotion is checked against FP+10 (this employee was
+                                            always effectively under the RAPS 10-year timeline).
+                                          !joinCand12Native -> B2.1.1-...FP+10(FP<12Y): "in time" is
+                                            checked against FP+12 (OTBPS-era 12-year expectation was in
+                                            play for this employee), but the benefit date itself is still
+                                            FP+10 in both cases, with the 2016 economic floor. */
+function computeLevel2(base2, base2Type, actualSPD, joinCand12Native){
+  if(base2Type==='raps_first_native' || base2Type==='raps_first_converted'){
+    const date = addYears(base2,10);
+    if(actualSPD && actualSPD<=date) return { due:false, nextBase:actualSPD, nextBaseType:'actual_promotion' };
+    const economic = date < RAPS_START ? new Date(RAPS_START.getTime()) : date;
+    const fromConverted = base2Type==='raps_first_converted';
+    const scheme = fromConverted ? 'B2.4.0-RAPS Second Regular Benefit-FB12To10Rev-FB+10' : 'B2.2.0-RAPS Second Regular Benefit-FB+10';
+    const type = fromConverted ? 'raps_second_fb_converted' : 'raps_second_fb_native';
+    return { due:true, date, economicDate:economic, scheme, type, floored:economic.getTime()!==date.getTime(), nextBase:date, nextBaseType:type };
+  }
+  if(base2Type==='otbps_first'){
+    const cand12 = addYears(base2,12);
+    const revised = addYears(base2,8);
+    const useOld = cand12 < RAPS_START;
+    const checkDate = useOld ? cand12 : revised;
+    if(actualSPD && actualSPD<=checkDate) return { due:false, nextBase:actualSPD, nextBaseType:'actual_promotion' };
+    if(useOld){
+      return { due:true, date:cand12, economicDate:cand12, scheme:'A2.1.0-OTBPS Second Benefit-FB+12', type:'otbps_second_fb', floored:false, nextBase:cand12, nextBaseType:'otbps_second_fb' };
+    }
+    const economic = revised < RAPS_START ? new Date(RAPS_START.getTime()) : revised;
+    return { due:true, date:revised, economicDate:economic, scheme:'B2.3.0-Revised OTBPS IN RAPS Second Benefit Date-12+8', type:'raps_second_8', floored:economic.getTime()!==revised.getTime(), nextBase:revised, nextBaseType:'raps_second_8' };
+  }
+  // base2Type === 'actual_promotion'
+  const cand12FP = addYears(base2,12);          // pure-OTBPS candidate (FP+12)
+  const useOldFP = cand12FP < RAPS_START;        // FP+12 itself already lands before 2016 -> plain OTBPS, no RAPS involved at all
+  if(useOldFP){
+    if(actualSPD && actualSPD<=cand12FP) return { due:false, nextBase:actualSPD, nextBaseType:'actual_promotion' };
+    return { due:true, date:cand12FP, economicDate:cand12FP, scheme:'A2.1.1-OTBPS Second Benefit-FP+12', type:'otbps_second_fp', floored:false, nextBase:cand12FP, nextBaseType:'otbps_second_fp' };
+  }
+  const revised = addYears(base2,10);            // benefit date is FP+10 either way once RAPS applies
+  const checkDate = joinCand12Native ? revised : cand12FP;   // but the "in time" threshold differs
+  if(actualSPD && actualSPD<=checkDate) return { due:false, nextBase:actualSPD, nextBaseType:'actual_promotion' };
+  const economic = revised < RAPS_START ? new Date(RAPS_START.getTime()) : revised;
+  const scheme = joinCand12Native ? 'B2.1.0-RAPS Second Regular Benefit-FP+10(FP<10Y)' : 'B2.1.1-RAPS Second Regular Benefit-FP+10(FP<12Y)';
+  const type = joinCand12Native ? 'raps_second_fp_native' : 'raps_second_fp_converted';
+  return { due:true, date:revised, economicDate:economic, scheme, type, floored:economic.getTime()!==revised.getTime(), nextBase:revised, nextBaseType:type };
+}
+
+/* ---- Level 3: Third Benefit ----
+   Special rule: if BOTH benefit-1 and benefit-2 were genuine OTBPS grants before 1 Jan 2016
+   (base3Type === 'otbps_second_fb'), third benefit = base+6y ("B3.5.0-RAPS Third Benefit-24+6"), not 10.
+   All other chains -> standard base+10y, named per which path fed into level-2:
+     'actual_promotion'          -> B3.1.0-RAPS Third Regular Benefit-SP+10 (base = an actual 2nd promotion)
+     'otbps_second_fp'           -> B3.6.0-RAPS Third Benefit-FP+12+10
+     'raps_second_8'             -> B3.4.0-RAPS Third Benefit-12+8+10(24+6)
+     'raps_second_fb_converted'  -> B3.3.0-RAPS Third Regular Benefit-ROIRFB+10SB+10
+     anything else (native/generic second-benefit chains not given a more specific code
+     in the source document) -> B3.2.0-RAPS Third Regular Benefit-SB+10 (generic "from a second benefit"). */
+function computeLevel3(base3, base3Type, actualTPD){
+  const special = base3Type==='otbps_second_fb';
+  const yrs = special ? 6 : 10;
+  const date = addYears(base3, yrs);
+  if(actualTPD && actualTPD<=date) return { due:false, nextBase:actualTPD, nextBaseType:'actual_promotion' };
+  const economic = date < RAPS_START ? new Date(RAPS_START.getTime()) : date;
+  let note='', scheme;
+  if(special){
+    scheme = 'B3.5.0-RAPS Third Benefit-24+6';
+    note = 'दोन्ही OTBPS लाभ (प्रथम व द्वितीय) दि.01/01/2016 पूर्वी मंजूर झाल्याने विशेष 6-वर्षे नियम लागू (द्वितीय OTBPS लाभ दिनांकापासून 6 वर्षे).';
+  } else if(base3Type==='actual_promotion'){
+    scheme = 'B3.1.0-RAPS Third Regular Benefit-SP+10';
+  } else if(base3Type==='otbps_second_fp'){
+    scheme = 'B3.6.0-RAPS Third Benefit-FP+12+10';
+    note = 'नियमित प्रथम पदोन्नती वेळेत मिळाली व द्वितीय लाभ जुन्या OTBPS पद्धतीने (दि.01/01/2016 पूर्वी) मंजूर झाला — म्हणून तृतीय लाभ द्वितीय लाभ दिनांकापासून 10 वर्षांनी (आर्थिक लाभ 01/01/2016 पेक्षा आधी नाही).';
+  } else if(base3Type==='raps_second_8'){
+    scheme = 'B3.4.0-RAPS Third Benefit-12+8+10(24+6)';
+  } else if(base3Type==='raps_second_fb_converted'){
+    scheme = 'B3.3.0-RAPS Third Regular Benefit-ROIRFB+10SB+10';
+  } else {
+    scheme = 'B3.2.0-RAPS Third Regular Benefit-SB+10';
+  }
+  return { due:true, date, economicDate:economic, scheme, type:'level3', floored:economic.getTime()!==date.getTime(), note };
+}
+
+/* ---- Full chain for one employee/draft (no eligibility/CR checks — pure date logic) ---- */
+/* Compares a computed ("correct") level result against an officer-recorded "already granted" date.
+   Returns { effective, verify }:
+   - effective: the result to use going forward for chaining (correct / recorded-as-issued / provisional-correct,
+     depending on match status and the officer's accept/reject choice).
+   - verify: details for display/reporting (recorded date, correct date, match status, choice made). */
+function schemeKeyFromType(type){ return (type && type.indexOf('otbps')===0) ? 'otbps' : 'raps'; }
+
+function withVerification(correct, grantedFlag, grantedDateStr, grantedScheme, revisionChoice, otbpsType, rapsType, otbpsLabel, rapsLabel, checkScheme){
+  if(!correct.due) return { effective: correct, verify: null };
+  const recordedDate = (grantedFlag && grantedDateStr) ? pd(grantedDateStr) : null;
+  if(!recordedDate) return { effective: correct, verify: { isMarkedGranted:false } };
+
+  const matches = recordedDate.getTime() === correct.date.getTime();
+  let correctSchemeKey = null, schemeMatches = null;
+  if(checkScheme){
+    correctSchemeKey = schemeKeyFromType(correct.type);
+    schemeMatches = grantedScheme ? (grantedScheme===correctSchemeKey) : null;
+  }
+  const verify = { isMarkedGranted:true, recordedDate, recordedScheme: grantedScheme||null, matches, revisionChoice: revisionChoice||null, correctDate: correct.date, correctScheme: correct.scheme, correctSchemeKey, schemeMatches };
+  if(matches) return { effective: correct, verify };
+
+  if(revisionChoice==='reject'){
+    const type = grantedScheme==='raps' ? rapsType : otbpsType;
+    const scheme = grantedScheme==='raps' ? rapsLabel : otbpsLabel;
+    const kept = { due:true, date:recordedDate, economicDate:recordedDate, scheme, type, floored:false, nextBase:recordedDate, nextBaseType:type };
+    return { effective: kept, verify };
+  }
+  // 'accept' or undecided -> use the mathematically correct value (provisional display note shown separately when undecided)
+  return { effective: correct, verify };
+}
+
+function computeChain(draftLike){
+  const c = CADRES[draftLike.cadre] || {};
+  const join = pd(draftLike.join);
+  if(!join) return null;
+  const actualFPD = pd(draftLike.fpdActual), actualSPD = pd(draftLike.spdActual), actualTPD = pd(draftLike.tpdActual);
+  const qtDate = c.qtOverride ? pd(draftLike.qtDate) : null;
+
+  // ---- Level 1: QT is built directly into the calculation here, before verification runs ----
+  const correct1 = computeLevel1(join, actualFPD, qtDate, !!c.qtOverride, c.qtExemptBefore);
+  const { effective: lvl1, verify: verify1 } = withVerification(
+    correct1, draftLike.granted1, draftLike.granted1Date, draftLike.granted1Scheme, draftLike.revisionChoice1,
+    'otbps_first', 'raps_first_native', 'OTBPS (जुनी योजना) — यापूर्वी मंजूर (सुधारित न केलेला)', 'RAPS — यापूर्वी मंजूर (सुधारित न केलेला)', true
+  );
+  lvl1.verify = verify1;
+
+  // ---- Level 2: correct value computed from lvl1's EFFECTIVE outcome (respecting any accept/reject decision) ----
+  const joinCand12Native = addYears(join,12) >= RAPS_START;   // "12 years service is NOT completing before 1 Jan 2016"
+  const correct2 = computeLevel2(lvl1.nextBase, lvl1.nextBaseType, actualSPD, joinCand12Native);
+  const { effective: lvl2, verify: verify2 } = withVerification(
+    correct2, draftLike.granted2, draftLike.granted2Date, draftLike.granted2Scheme, draftLike.revisionChoice2,
+    'otbps_second_fb', 'raps_second_fb_native', 'OTBPS (जुनी योजना) — यापूर्वी मंजूर (सुधारित न केलेला)', 'RAPS — यापूर्वी मंजूर (सुधारित न केलेला)', true
+  );
+  lvl2.verify = verify2;
+
+  // ---- Level 3: correct value computed from lvl2's EFFECTIVE outcome ----
+  const correct3 = computeLevel3(lvl2.nextBase, lvl2.nextBaseType, actualTPD);
+  const { effective: lvl3, verify: verify3 } = withVerification(
+    correct3, draftLike.granted3, draftLike.granted3Date, null, draftLike.revisionChoice3,
+    'level3', 'level3', 'यापूर्वी मंजूर (सुधारित न केलेला)', 'यापूर्वी मंजूर (सुधारित न केलेला)'
+  );
+  lvl3.verify = verify3;
+
+  return { lvl1, lvl2, lvl3 };
+}
+
+
+/* Certificate / disciplinary eligibility blockers that do NOT depend on the birth or joining date.
+   Kept in their own function so they can still be evaluated and reported when those dates are
+   missing (in which case no benefit calculation runs, but the ineligibility flags must show). */
+function computeEligibilityFlags(emp, c, cls){
+  const flags = [];
+  const notes = [];
+  // ---- a benefit marked "यापूर्वी मंजूर" but with no grant date recorded ----
+  [['granted1','granted1Date','लाभ-1'], ['granted2','granted2Date','लाभ-2'], ['granted3','granted3Date','लाभ-3']].forEach(([gk,dk,label])=>{
+    if(emp[gk] && !emp[dk]){
+      flags.push(`${label} "यापूर्वी मंजूर झाला आहे" असे नमूद केले आहे, परंतु त्याचा मंजुरी दिनांक नमूद केलेला नाही`);
+    }
+  });
+  // ---- actual-promotion status not stated (neither "झाली" nor "झाली नाही" selected) ----
+  [['fpdDone','fpdActual','प्रथम'], ['spdDone','spdActual','द्वितीय'], ['tpdDone','tpdActual','तृतीय']].forEach(([key,dateKey,label])=>{
+    const v = emp[key];
+    if(v!=='done' && v!=='notdone'){
+      flags.push(`${label} पदोन्नती झाली आहे का हे नमूद केलेले नाही — "पदोन्नती झाली" किंवा "पदोन्नती झाली नाही" यापैकी एक निवडणे आवश्यक`);
+    } else if(v==='done' && !emp[dateKey]){
+      flags.push(`${label} पदोन्नती "झाली" असे नमूद केले आहे, परंतु तिचा दिनांक नमूद केलेला नाही`);
+    }
+  });
+  // ---- hard blockers (common) ----
+  if(!emp.permanency) flags.push('स्थैत्व प्रमाणपत्र प्राप्त नाही');
+  if(emp.casteReservation && !emp.casteValidity) flags.push('प्रथम नियुक्ती/पदोन्नती जात आधारित आरक्षणाद्वारे — जात वैधता प्रमाणपत्र सादर केलेले नाही');
+  {
+    const todayForAssets = new Date(); todayForAssets.setHours(0,0,0,0);
+    const dueYear = assetsCertDueYear(todayForAssets);
+    const enteredYear = parseInt(emp.assetsCertYear,10);
+    if(isNaN(enteredYear) || enteredYear < dueYear){
+      flags.push(`मत्ता व दायित्व प्रमाणपत्र चालू वर्षाचे (दि.31/03/${dueYear} स्थिती) सादर केलेले नाही`);
+    }
+  }
+  if(emp.inquiryOngoing) flags.push('फौजदारी खटला / विभागीय चौकशी सुरू आहे');
+  if(emp.punishmentOngoing) flags.push('मागील प्रकरणातील शिक्षा सुरू आहे');
+  if(emp.absence) flags.push('सलग 2 वर्षांपेक्षा जास्त गैरहजर');
+  if(emp.integrity) flags.push('सचोटी संशयास्पद');
+
+  // ---- class-3 specific blockers ----
+  if(cls==='3' && !c.reducedClass3){
+    if(!emp.lang) flags.push('भाषा परीक्षा सूट प्राप्त नाही');
+    if(!emp.computer) flags.push('संगणक पात्रता प्रमाणपत्र प्राप्त नाही');
+    if(c.typewriting && !emp.typewriting) flags.push('टंकलेखन प्रमाणपत्र प्राप्त नाही');
+    if(!emp.ssdDate) flags.push('SSD परीक्षा उत्तीर्ण/सूट दिनांक नाही');
+    if(c.qtRequired && !emp.qtDate){
+      // allow blank QT only for VRO/CO cadre when benefit falls before qtExemptBefore -- approximate using join+10 as proxy is unreliable, so just warn instead of hard-block when exemption cadre
+      if(c.qtExemptBefore){ notes.push('QT दिनांक नमूद नाही — तलाठी/मंडळ अधिकारी संवर्गास 29/10/1997 पूर्वीच्या प्रकरणी सूट लागू शकते, अन्यथा आवश्यक.'); }
+      else { flags.push('QT परीक्षा उत्तीर्ण/सूट दिनांक नाही'); }
+    }
+  }
+  if(cls==='3'){
+    if(emp.trainingNominated && !emp.trainingDone) flags.push('पायाभूत प्रशिक्षण नामनिर्देशन झाले, परंतु पूर्ण नाही');
+  }
+
+  return { flags, notes };
+}
+
+function calcEmployee(emp){
+  const c = CADRES[emp.cadre] || {};
+  const dob = pd(emp.dob), join = pd(emp.join);
+  const cls = emp.cls;
+  const flags = [];       // hard blockers (any benefit)
+  const notes = [];       // informational flags for officer review
+
+  if(!dob || !join){
+    /* Incomplete vital dates: the record is still valid, but NO benefit or eligibility calculation
+       may run on it. Every consumer (results table, discrepancy report, exports) receives a complete
+       result shape with an "incomplete" flag instead of an error. */
+    const missingParts = [];
+    if(!dob) missingParts.push('जन्मतारीख');
+    if(!join) missingParts.push('रुजू दिनांक');
+    const incompleteReason = `⚠️ ${missingParts.join(' व ')} नमूद नाही — लाभ गणना व पात्रता तपासणी शक्य नाही.`;
+    /* The certificate / disciplinary ineligibility checks do NOT need the birth or joining date, so they
+       are still evaluated here and reported alongside the missing-date flag. */
+    const elig = computeEligibilityFlags(emp, c, cls);
+    const incompleteReasons = [incompleteReason, ...elig.flags];
+    const incompleteLvl = () => ({ pill: elig.flags.length ? 'danger' : 'warn', text:'⚠️ माहिती अपूर्ण — गणना शक्य नाही', date:null, reasons:incompleteReasons, note:null, incomplete:true, notFit: elig.flags.length>0 });
+    return {
+      emp, cadreLabel: c.label||emp.cadre, retirement:null, capDate:null,
+      incompleteDates:true, incompleteReason,
+      lvl1: incompleteLvl(), lvl2: incompleteLvl(), lvl3: incompleteLvl(),
+      hardBlocked: elig.flags.length>0, flags: elig.flags, notes: [incompleteReason, ...elig.notes],
+      remarks: emp.remarks||''
+    };
+  }
+
+  // Retirement
+  const retireAge = cls==='3' ? 58 : 60;
+  const retirement = computeRetirement(dob, retireAge);
+  const death = pd(emp.deathDate);
+  const vrs = pd(emp.vrsDate);
+  const capDate = minDate(retirement, death, vrs);
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  // 55-year review (class-3 only) — a CURRENT-STATUS check (as of today), matching the live-form
+  // indicator and the actual rule ("if employee has completed 55 years on current date... only dead
+  // and retired employees are exempted"). Applies uniformly to every benefit — it is NOT re-tested
+  // against each benefit's own historical date, since a since-retired employee is exempt outright.
+  let review55Due = null, review55Issue = null;
+  if(cls==='3'){
+    review55Due = addYears(dob,55);
+    const currentlyExempt = !!death || (retirement && retirement<=today) || (vrs && vrs<=today);
+    if(!currentlyExempt && today >= review55Due && !emp.review55Date){
+      review55Issue = '55 वर्षे पुनर्विलोकन प्रमाणपत्र आवश्यक (कर्मचारी सद्या सेवेत असून वयाची 55 वर्षे पूर्ण)';
+    }
+  }
+
+  const elig = computeEligibilityFlags(emp, c, cls);
+  flags.push(...elig.flags);
+  notes.push(...elig.notes);
+  const hardBlocked = flags.length>0;
+
+  // ---- full OTBPS/RAPS chain ----
+  const chain = computeChain(emp);
+  const { lvl1, lvl2, lvl3 } = chain;
+
+  if(lvl1.due && !(lvl1.verify&&lvl1.verify.isMarkedGranted) && lvl1.nextBaseType==='raps_first_converted') notes.push(`लाभ-1: "${lvl1.scheme}" नुसार गणना.`);
+  if(lvl2.due && !(lvl2.verify&&lvl2.verify.isMarkedGranted) && lvl2.type==='raps_second_8') notes.push(`लाभ-2: "${lvl2.scheme}" नुसार (लाभ-1 पासून 8 वर्षे) गणना.`);
+  if(lvl2.due && !(lvl2.verify&&lvl2.verify.isMarkedGranted) && lvl2.type==='raps_second_fp_converted') notes.push(`लाभ-2: "${lvl2.scheme}" नुसार (प्रत्यक्ष प्रथम पदोन्नतीपासून 10 वर्षे) गणना.`);
+  if(lvl3.note && !(lvl3.verify&&lvl3.verify.matches===true)) notes.push(lvl3.note);
+
+  function levelStatus(lvl){
+    if(!lvl.due) return { pill:'muted', text:'वेळेत नियमित पदोन्नती मिळाली', date:null };
+
+    const v = lvl.verify || { isMarkedGranted:false };
+    const capExceeded = capDate && lvl.date > capDate;
+    const reasons = [...flags];
+    if(review55Issue) reasons.push(review55Issue);
+    const crCheck = crAverageForWindow(emp.cr||[], lvl.date);
+    if(crCheck.avg===null){ reasons.push('गोपनीय अहवाल गुण उपलब्ध नाहीत — पडताळणी आवश्यक'); }
+    else if(crCheck.avg<4){ reasons.push(`गोपनीय अहवाल सरासरी ${crCheck.avg.toFixed(2)} (किमान 4 आवश्यक)`); }
+    else if(crCheck.missing>0){ reasons.push(`${crCheck.missing} वर्षांचे गोपनीय अहवाल गुण अपूर्ण — पडताळणी आवश्यक`); }
+
+    const isFuture = lvl.date > today;
+
+    if(capExceeded){
+      const reason = death && death<=lvl.date ? 'मृत्यूमुळे' : (vrs && vrs<=lvl.date ? 'स्वेच्छा सेवानिवृत्तीमुळे' : 'सेवानिवृत्तीमुळे');
+      return { pill:'muted', text:`लागू नाही (${reason})`, date:lvl.date, reasons:[] };
+    }
+
+    const noteParts = [];
+    if(lvl.qtOverridden) noteParts.push('QT दिनांकानुसार सुधारित');
+    if(lvl.floored) noteParts.push('आर्थिक लाभ 01/01/2016 पासून');
+    if(isFuture) noteParts.push('🕒 भविष्यातील तारीख — सध्या लाभ लागू नाही');
+
+    // ---- verification outcome for a previously-recorded "already granted" benefit ----
+    const schemeWrong = v.schemeMatches===false;
+    const schemeNote = schemeWrong ? ` ⚠️ नोंदवलेली योजना (${SCHEME_LABEL[v.recordedScheme]||v.recordedScheme}) चुकीची — योग्य योजना ${SCHEME_LABEL[v.correctSchemeKey]} आहे.` : '';
+    if(v.isMarkedGranted && v.matches===true){
+      return { pill: schemeWrong?'warn':'ok', text: schemeWrong?'यापूर्वी मंजूर (दिनांक योग्य, योजना चुकीची)':'यापूर्वी मंजूर (योग्य दिनांक)', date:lvl.date, reasons: schemeWrong?[`नोंदवलेली मंजुरी दि. ${fmt(v.recordedDate)} नियमानुसार योग्य आहे.${schemeNote}`]:[], note: schemeWrong?'':`नोंदवलेली मंजुरी दि. ${fmt(v.recordedDate)} नियमानुसार योग्य आहे.`, scheme: lvl.scheme, schemeWrong };
+    }
+    if(v.isMarkedGranted && v.matches===false){
+      if(v.revisionChoice==='accept'){
+        reasons.unshift(`🔁 पूर्वी दि. ${fmt(v.recordedDate)} रोजी चुकीने मंजूर करण्यात आला होता — सुधारित दिनांक (दि. ${fmt(lvl.date)}) स्वीकारण्यात आला आहे. पूर्वीचा आदेश दुरुस्त करून सुधारित आदेश काढणे आवश्यक.${schemeNote}`);
+        return { pill: (hardBlocked||reasons.length>1)?'danger':'warn', text:'🔁 सुधारित — पूर्वीचा लाभ दुरुस्त', date:lvl.date, reasons, note: noteParts.join(' · '), scheme: lvl.scheme, revised:true, previousWrongDate:v.recordedDate, schemeWrong };
+      }
+      if(v.revisionChoice==='reject'){
+        reasons.unshift(`↩️ नियमानुसार योग्य दिनांक दि. ${fmt(v.correctDate)} आहे, परंतु अधिकाऱ्याने पूर्वीचाच दिनांक (दि. ${fmt(v.recordedDate)}) कायम ठेवण्याचा निर्णय घेतला आहे.${schemeNote}`);
+        return { pill:'warn', text:'↩️ पूर्वीचाच दिनांक कायम', date:lvl.date, reasons, note: noteParts.join(' · '), scheme: lvl.scheme, kept:true, correctDateIfRevised:v.correctDate, schemeWrong };
+      }
+      reasons.unshift(`❗ पूर्वी दि. ${fmt(v.recordedDate)} रोजी मंजूर करण्यात आला होता, परंतु तो दिनांक नियमानुसार चुकीचा दिसतो (योग्य दिनांक दि. ${fmt(v.correctDate)}). निर्णय (स्वीकार/नकार) प्रलंबित आहे — कृपया कर्मचारी नोंद टॅबमध्ये जाऊन निर्णय घ्या.${schemeNote}`);
+      return { pill:'danger', text:'❗ पूर्वीचा लाभ चुकीने मंजूर — निर्णय प्रलंबित', date:lvl.date, reasons, note: noteParts.join(' · '), scheme: lvl.scheme, decisionPending:true, previousWrongDate:v.recordedDate, correctDateIfRevised:v.correctDate, schemeWrong, notFit:true };
+    }
+
+    const note = noteParts.join(' · ');
+    if(reasons.length){
+      return { pill: hardBlocked?'danger':'warn', text:'प्रलंबित / अपात्र', date:lvl.date, reasons, note, scheme: lvl.scheme, dateIsFuture:isFuture, notFit:true };
+    }
+    if(isFuture){
+      return { pill:'warn', text:'पात्र (भविष्यातील तारीख)', date:lvl.date, reasons:[], note, scheme: lvl.scheme, dateIsFuture:true };
+    }
+    return { pill:'ok', text:'पात्र', date:lvl.date, reasons:[], note, scheme: lvl.scheme, dateIsFuture:false };
+  }
+
+  /* If a lower benefit is due but found not fit, everything computed on top of its date is not fit too —
+     the employee cannot be considered for a later benefit while the one it's built on remains unearned. */
+  function cascadeNotFit(lowerLvl, lowerStatus, upperLvl, upperStatus, lowerLabel){
+    // Don't override an upper level that's already a terminal/not-applicable status in its own right
+    // (retired/dead/VRS-capped, or superseded) — cascading "unfit" only makes sense when the upper
+    // level would otherwise be actively evaluated.
+    if(lowerLvl.due && lowerStatus.notFit && upperLvl.due && upperStatus.pill!=='muted'){
+      const reason = `⛔ ${lowerLabel} स्वतः अपात्र ठरल्याने, त्यावर आधारित हा लाभही अपात्र ठरतो — आधी ${lowerLabel} पात्र करणे आवश्यक.`;
+      return Object.assign({}, upperStatus, {
+        pill: lowerStatus.pill==='danger' ? 'danger' : 'warn',
+        text: '⛔ अपात्र (मागील लाभामुळे)',
+        reasons: [reason, ...(upperStatus.reasons||[])],
+        notFit: true,
+        cascadedFrom: lowerLabel
+      });
+    }
+    return upperStatus;
+  }
+
+  const lvl1Status = levelStatus(lvl1);
+  let lvl2Status = levelStatus(lvl2);
+  let lvl3Status = levelStatus(lvl3);
+  lvl2Status = cascadeNotFit(lvl1, lvl1Status, lvl2, lvl2Status, 'लाभ-1');
+  lvl3Status = cascadeNotFit(lvl2, lvl2Status, lvl3, lvl3Status, 'लाभ-2');
+
+  return {
+    emp, cadreLabel: c.label||emp.cadre, retirement, capDate,
+    lvl1: lvl1Status, lvl2: lvl2Status, lvl3: lvl3Status,
+    hardBlocked, flags, notes, remarks: emp.remarks||''
+  };
+}
+
+/* ============================================================
+   RESULTS PANEL
+   ============================================================ */
+function pillHtml(status){
+  if(!status.date && status.pill==='muted') return `<span class="status-pill status-muted">${status.text}</span>`;
+  let cls = status.pill==='ok'?'status-ok':status.pill==='warn'?'status-warn':status.pill==='danger'?'status-danger':'status-muted';
+  let html = `<div><b>${fmt(status.date)}</b><br><span class="status-pill ${cls}">${status.text}</span>`;
+  if(status.scheme) html += `<br><span class="hint">${status.scheme}</span>`;
+  if(status.note) html += `<br><span class="hint">${status.note}</span>`;
+  if(status.reasons && status.reasons.length) html += `<ul class="reason-list">${status.reasons.map(r=>`<li>${r}</li>`).join('')}</ul>`;
+  html += `</div>`;
+  return html;
+}
+
+/* "निकाल व गणना" is shown newest-saved first, so the record just saved or edited is always at the top
+   (no scrolling past every other employee). Records without a timestamp keep their stored order. */
+function resultsOrder(){
+  return EMPLOYEES.map((e,i)=>({e,i}))
+    .sort((a,b)=>{
+      const ta = Number(a.e.updatedAt)||0, tb = Number(b.e.updatedAt)||0;
+      if(tb!==ta) return tb-ta;
+      return a.i-b.i;
+    })
+    .map(x=>x.e);
+}
+
+function renderResults(){
+  const body = document.getElementById('results-body');
+  body.innerHTML='';
+  document.getElementById('results-empty').style.display = EMPLOYEES.length? 'none':'block';
+  resultsOrder().forEach(emp=>{
+    const r = calcEmployee(emp);
+    const tr = document.createElement('tr');
+    if(r.error){
+      tr.innerHTML = `<td>${emp.name}</td><td colspan="5">${r.error}</td><td></td>`;
+      body.appendChild(tr); return;
+    }
+    const promoFlags = (r.flags||[]).filter(f=> f.indexOf('पदोन्नती') !== -1);
+    tr.innerHTML = `
+      <td>${emp.name}${emp.empno?('<br><span class="hint">'+emp.empno+'</span>'):''}${promoFlags.length?('<br><span class="status-pill status-warn">⚠️ पदोन्नती स्थिती अपूर्ण</span>'):''}${r.remarks?('<br><span class="hint">📝 '+esc(r.remarks)+'</span>'):''}</td>
+      <td>वर्ग-${emp.cls}<br>${r.cadreLabel}</td>
+      <td>${pillHtml(r.lvl1)}</td>
+      <td>${pillHtml(r.lvl2)}</td>
+      <td>${pillHtml(r.lvl3)}</td>
+      <td>${fmt(r.retirement)}</td>
+      <td><button class="btn small secondary btn-view">तपशील</button> <button class="btn small secondary btn-edit-res">संपादन</button></td>`;
+    tr.querySelector('.btn-edit-res').addEventListener('click', ()=> loadIntoForm(emp));
+    tr.querySelector('.btn-view').addEventListener('click', ()=>{
+      alert(
+        `${emp.name} — तपशील\n\n`+
+        `सेवानिवृत्ती दिनांक: ${fmt(r.retirement)}\n`+
+        (promoFlags.length? `\nपदोन्नती स्थिती ध्वज:\n- ${promoFlags.join('\n- ')}\n` : '')+
+        (r.flags.length? `\nसर्वसाधारण अडथळे:\n- ${r.flags.join('\n- ')}\n` : '')+
+        (r.notes.length? `\nमहत्त्वाच्या टिपा:\n- ${r.notes.join('\n- ')}\n` : '')+
+        (r.remarks? `\nअतिरिक्त सूचना / शेरा:\n${r.remarks}\n` : '')
+      );
+    });
+    body.appendChild(tr);
+  });
+}
+
+/* ============================================================
+   DISCREPANCY REPORT
+   Covers two distinct situations, both surfaced per benefit level:
+   1. Verification discrepancies — a previously "already granted" benefit whose recorded date/scheme
+      doesn't match the rules (revised / kept-as-wrong / decision-pending / scheme-wrong).
+   2. Ineligibility — a due benefit that fails on its own merits (missing certificates, disciplinary
+      flags, CR average, 55-year review, etc.) or is blocked because a lower benefit is itself unfit.
+   ============================================================ */
+function buildDiscrepancyRows(){
+  const rows = [];
+  EMPLOYEES.forEach(emp=>{
+    const r = calcEmployee(emp);
+    if(r.error) return;
+    const c = CADRES[emp.cadre]||{};
+    const issues = [];
+    if(r.incompleteDates){
+      // Missing vital dates: no per-benefit evaluation is possible, so report the missing-date flag
+      // followed by each independent certificate / disciplinary ineligibility flag.
+      issues.push(r.incompleteReason);
+      r.flags.forEach(f=> issues.push(f));
+    } else {
+      [['लाभ-1', r.lvl1], ['लाभ-2', r.lvl2], ['लाभ-3', r.lvl3]].forEach(([label, lvl])=>{
+        if(lvl.revised) issues.push(`${label}: सुधारित स्वीकृत (पूर्वीचा चुकीचा दि. ${fmt(lvl.previousWrongDate)})`);
+        else if(lvl.kept) issues.push(`${label}: जुनाच (चुकीचा) दिनांक कायम ठेवला (योग्य दि. ${fmt(lvl.correctDateIfRevised)} असूनही)`);
+        else if(lvl.decisionPending) issues.push(`${label}: निर्णय प्रलंबित (योग्य दि. ${fmt(lvl.correctDateIfRevised)})`);
+        else if(lvl.cascadedFrom) issues.push(`${label}: ⛔ अपात्र — ${lvl.cascadedFrom} स्वतः अपात्र/प्रलंबित असल्याने`);
+        else if(lvl.notFit && lvl.reasons && lvl.reasons.length) issues.push(`${label}: अपात्र — ${lvl.reasons.join('; ')}`);
+        else if(lvl.schemeWrong) issues.push(`${label}: योजना (OTBPS/RAPS) चुकीची नोंदवली`);
+      });
+    }
+    // Record-level promotion-status flags must always show in this report, even when every benefit
+    // level is otherwise "muted" (regular promotion received in time). Skip if already listed above.
+    r.flags.filter(f=> f.indexOf('पदोन्नती') !== -1 || f.indexOf('मंजुरी दिनांक नमूद केलेला नाही') !== -1).forEach(f=>{
+      if(!issues.some(i=> i.indexOf(f) !== -1)) issues.push(f);
+    });
+    if(issues.length){
+      rows.push({ office: emp.office||'(नमूद नाही)', name: emp.name, empno: emp.empno||'', cadreLabel: c.label||emp.cadre, issues, remarks: emp.remarks||'' });
+    }
+  });
+  rows.sort((a,b)=> a.office.localeCompare(b.office,'mr') || a.name.localeCompare(b.name,'mr'));
+  return rows;
+}
+
+function renderDiscrepancyReport(){
+  const body = document.getElementById('discrepancy-body');
+  const rows = buildDiscrepancyRows();
+  body.innerHTML = '';
+  document.getElementById('discrepancy-empty').style.display = rows.length? 'none':'block';
+  rows.forEach(row=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${row.office}</td>
+      <td>${row.name}</td>
+      <td>${row.empno}</td>
+      <td>${row.cadreLabel}</td>
+      <td><ul class="reason-list" style="margin:0;">${row.issues.map(i=>`<li>${i}</li>`).join('')}</ul>${row.remarks?`<div class="hint" style="margin-top:6px;">📝 अतिरिक्त सूचना / शेरा: ${esc(row.remarks)}</div>`:''}</td>`;
+    body.appendChild(tr);
+  });
+}
+
+document.getElementById('btn-refresh-discrepancy').addEventListener('click', ()=>{
+  EMPLOYEES = loadEmployees();   // reload from storage too, in case data changed in another tab/session
+  renderDiscrepancyReport();
+});
+
+document.getElementById('btn-export-discrepancy-excel').addEventListener('click', ()=>{
+  const rows = buildDiscrepancyRows();
+  if(!rows.length){ alert('सद्यस्थितीत कोणत्याही कर्मचाऱ्याच्या लाभांमध्ये त्रुटी आढळली नाही.'); return; }
+  const exportRows = rows.map(row=>({
+    'कार्यालय': row.office,
+    'नाव': row.name,
+    'Sevarth ID': row.empno,
+    'सध्याचे पद': row.cadreLabel,
+    'त्रुटी असलेले लाभ व तपशील': row.issues.join('; '),
+    'अतिरिक्त सूचना / शेरा': row.remarks||''
+  }));
+  const ws = XLSX.utils.json_to_sheet(exportRows);
+  ws['!cols'] = [{wch:24},{wch:22},{wch:16},{wch:26},{wch:60},{wch:40}];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'त्रुटी अहवाल');
+  XLSX.writeFile(wb, 'TBP_Satara_Discrepancy_Report.xlsx');
+});
+
+/* ============================================================
+   DATABASE BACKUP / RESTORE (raw fields — full fidelity round-trip)
+   ============================================================ */
+const BACKUP_FIELDS = [
+  {key:'id', label:'ID', type:'string'},
+  {key:'updatedAt', label:'शेवटचे जतन (टाइमस्टॅम्प)', type:'string'},
+  {key:'name', label:'नाव', type:'string'},
+  {key:'empno', label:'Employee Sevarth ID', type:'string'},
+  {key:'office', label:'सध्याचे कार्यालय', type:'string'},
+  {key:'cls', label:'वर्ग', type:'string'},
+  {key:'cadre', label:'पद (की)', type:'string'},
+  {key:'dob', label:'जन्मतारीख', type:'date'},
+  {key:'join', label:'रुजू दिनांक', type:'date'},
+  {key:'fpdDone', label:'प्रथम पदोन्नती स्थिती (done/notdone/रिकामे)', type:'string'},
+  {key:'spdDone', label:'द्वितीय पदोन्नती स्थिती (done/notdone/रिकामे)', type:'string'},
+  {key:'tpdDone', label:'तृतीय पदोन्नती स्थिती (done/notdone/रिकामे)', type:'string'},
+  {key:'fpdActual', label:'प्रथम पदोन्नती (प्रत्यक्ष)', type:'date'},
+  {key:'spdActual', label:'द्वितीय पदोन्नती (प्रत्यक्ष)', type:'date'},
+  {key:'tpdActual', label:'तृतीय पदोन्नती (प्रत्यक्ष)', type:'date'},
+  {key:'granted1', label:'लाभ-1 यापूर्वी मंजूर', type:'bool'},
+  {key:'granted1Date', label:'लाभ-1 मंजुरी दिनांक', type:'date'},
+  {key:'granted1Scheme', label:'लाभ-1 योजना', type:'string'},
+  {key:'revisionChoice1', label:'लाभ-1 निर्णय', type:'string'},
+  {key:'granted2', label:'लाभ-2 यापूर्वी मंजूर', type:'bool'},
+  {key:'granted2Date', label:'लाभ-2 मंजुरी दिनांक', type:'date'},
+  {key:'granted2Scheme', label:'लाभ-2 योजना', type:'string'},
+  {key:'revisionChoice2', label:'लाभ-2 निर्णय', type:'string'},
+  {key:'granted3', label:'लाभ-3 यापूर्वी मंजूर', type:'bool'},
+  {key:'granted3Date', label:'लाभ-3 मंजुरी दिनांक', type:'date'},
+  {key:'revisionChoice3', label:'लाभ-3 निर्णय', type:'string'},
+  {key:'permanency', label:'स्थैत्व प्रमाणपत्र', type:'bool'},
+  {key:'casteReservation', label:'जात आधारित आरक्षणाद्वारे नियुक्ती/पदोन्नती', type:'bool'},
+  {key:'casteValidity', label:'जात वैधता प्रमाणपत्र सादर', type:'bool'},
+  {key:'assetsCertYear', label:'मत्ता व दायित्व प्रमाणपत्र सादर वर्ष', type:'string'},
+  {key:'lang', label:'भाषा सूट', type:'bool'},
+  {key:'computer', label:'संगणक प्रमाणपत्र', type:'bool'},
+  {key:'typewriting', label:'टंकलेखन प्रमाणपत्र', type:'bool'},
+  {key:'ssdDate', label:'SSD दिनांक', type:'date'},
+  {key:'qtDate', label:'QT दिनांक', type:'date'},
+  {key:'trainingNominated', label:'प्रशिक्षण नामनिर्देशन', type:'bool'},
+  {key:'trainingDone', label:'प्रशिक्षण पूर्ण', type:'bool'},
+  {key:'review55Date', label:'55 वर्षे प्रमाणपत्र दिनांक', type:'date'},
+  {key:'inquiryOngoing', label:'चौकशी सुरू', type:'bool'},
+  {key:'punishmentOngoing', label:'शिक्षा सुरू', type:'bool'},
+  {key:'absence', label:'गैरहजर 2+ वर्षे', type:'bool'},
+  {key:'integrity', label:'सचोटी संशयास्पद', type:'bool'},
+  {key:'deathDate', label:'मृत्यू दिनांक', type:'date'},
+  {key:'vrsDate', label:'VRS दिनांक', type:'date'},
+  {key:'remarks', label:'अतिरिक्त सूचना / शेरा', type:'string'},
+  {key:'cr', label:'गोपनीय अहवाल (वर्ष:गुण;...)', type:'cr'},
+];
+
+function serializeBackupValue(val, type){
+  if(type==='bool') return val ? 'TRUE' : 'FALSE';
+  if(type==='cr') return (val||[]).map(x=>`${x.fy}:${x.marks}`).join(';');
+  return val==null ? '' : String(val);
+}
+function deserializeBackupValue(raw, type){
+  if(raw===undefined || raw===null) raw='';
+  if(type==='bool'){
+    const s = String(raw).trim().toUpperCase();
+    return s==='TRUE' || s==='होय' || s==='1' || s==='YES';
+  }
+  if(type==='cr'){
+    const s = String(raw).trim();
+    if(!s) return [];
+    return s.split(';').map(pair=>{
+      const parts = pair.split(':');
+      return { fy: parseInt(parts[0],10), marks: parseFloat(parts[1]) };
+    }).filter(x=> !isNaN(x.fy) && !isNaN(x.marks));
+  }
+  if(type==='date'){
+    if(raw instanceof Date) return fmt(raw);
+    if(typeof raw === 'number'){
+      const d = new Date(Math.round((raw - 25569) * 86400 * 1000)); // Excel serial date -> JS Date
+      return isNaN(d.getTime()) ? '' : fmt(d);
+    }
+    const s = String(raw).trim();
+    if(!s) return '';
+    const parsed = pd(s);
+    return parsed ? fmt(parsed) : s; // keep raw text rather than silently dropping an unparseable value
+  }
+  return String(raw);
+}
+
+document.getElementById('btn-backup-excel').addEventListener('click', ()=>{
+  if(!EMPLOYEES.length){ alert('बॅकअपसाठी कोणतीही नोंद उपलब्ध नाही.'); return; }
+  const rows = EMPLOYEES.map(emp=>{
+    const row = {};
+    BACKUP_FIELDS.forEach(f=> row[f.label] = serializeBackupValue(emp[f.key], f.type));
+    return row;
+  });
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'TBPS Database Backup');
+  const fname = dbBackupFileName();
+  XLSX.writeFile(wb, fname);
+  const meta = loadDbFileMeta();
+  meta.lastBackupName = fname; meta.lastBackupAt = nowStamp();
+  saveDbFileMeta(meta);
+  renderDbFileBar();
+});
+
+document.getElementById('btn-restore-excel').addEventListener('click', ()=>{
+  document.getElementById('restore-file-input').click();
+});
+document.getElementById('restore-file-input').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (evt)=>{
+    try{
+      const data = new Uint8Array(evt.target.result);
+      const wb = XLSX.read(data, {type:'array'});
+      const sheetName = wb.SheetNames[0];
+      const ws = wb.Sheets[sheetName];
+      const rows = XLSX.utils.sheet_to_json(ws, {defval:''});
+      if(!rows.length){ alert('निवडलेल्या फाईलमध्ये कोणताही डेटा आढळला नाही.'); return; }
+      const msg = `या फाईलमध्ये ${rows.length} कर्मचाऱ्यांच्या नोंदी आढळल्या. सध्याचा संपूर्ण डेटाबेस (${EMPLOYEES.length} नोंदी) यांनी बदलला जाईल — ही कृती पूर्ववत करता येणार नाही. पुढे जायचे का?`;
+      if(!confirm(msg)){ e.target.value=''; return; }
+      const restored = rows.map(row=>{
+        const emp = {};
+        BACKUP_FIELDS.forEach(f=>{ emp[f.key] = deserializeBackupValue(row[f.label], f.type); });
+        if(!emp.id) emp.id = 'emp_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+        return emp;
+      });
+      EMPLOYEES = restored;
+      saveEmployees(EMPLOYEES);
+      const meta = loadDbFileMeta();
+      meta.lastRestoreName = file.name || '(नाव उपलब्ध नाही)'; meta.lastRestoreAt = nowStamp();
+      saveDbFileMeta(meta);
+      refreshOfficeDatalist();
+      clearForm();
+      renderList();
+      renderDiscrepancyReport();
+      renderDbFileBar();
+      alert(`${restored.length} कर्मचाऱ्यांच्या नोंदी यशस्वीरित्या पुनर्संचयित झाल्या.`);
+    } catch(err){
+      alert('फाईल वाचताना त्रुटी आली: '+err.message);
+    } finally {
+      e.target.value = '';
+    }
+  };
+  reader.readAsArrayBuffer(file);
+});
+
+
+/* ============================================================
+   EXCEL EXPORT
+   ============================================================ */
+document.getElementById('btn-export-excel').addEventListener('click', ()=>{
+  if(!EMPLOYEES.length){ alert('निर्यात करण्यासाठी कोणतीही नोंद उपलब्ध नाही.'); return; }
+  const yn = v => v ? 'होय' : 'नाही';
+  const cls3 = e => e.cls==='3';
+  const revisionFlagText = lvl => {
+    if(lvl.incomplete) return 'गणना शक्य नाही (जन्मतारीख/रुजू तारीख अपूर्ण)';
+    const schemeSuffix = lvl.schemeWrong ? ' + योजना चुकीची नोंदवली' : '';
+    if(lvl.revised) return `होय — सुधारित स्वीकृत (पूर्वीचा चुकीचा दि. ${fmt(lvl.previousWrongDate)})${schemeSuffix}`;
+    if(lvl.kept) return `तपासले — जुनाच दिनांक कायम (योग्य दि. ${fmt(lvl.correctDateIfRevised)} असूनही)${schemeSuffix}`;
+    if(lvl.decisionPending) return `❗ निर्णय प्रलंबित (योग्य दि. ${fmt(lvl.correctDateIfRevised)})${schemeSuffix}`;
+    if(lvl.text==='यापूर्वी मंजूर (योग्य दिनांक)') return 'तपासले — योग्य';
+    if(lvl.text==='यापूर्वी मंजूर (दिनांक योग्य, योजना चुकीची)') return 'दिनांक योग्य — योजना चुकीची नोंदवली';
+    return 'लागू नाही';
+  };
+  const fitnessFlagText = lvl => {
+    if(lvl.incomplete) return '⚠️ गणना शक्य नाही — जन्मतारीख/रुजू तारीख नमूद नाही';
+    if(lvl.cascadedFrom) return `⛔ अपात्र — ${lvl.cascadedFrom} स्वतः अपात्र/प्रलंबित असल्याने`;
+    if(lvl.notFit) return '⚠️ स्वतः अपात्र (खालील कारणांसाठी)';
+    return 'लागू नाही';
+  };
+  const rows = EMPLOYEES.map(emp=>{
+    const r = calcEmployee(emp);
+    const c = CADRES[emp.cadre]||{};
+    const crStr = (emp.cr||[]).slice().sort((a,b)=>a.fy-b.fy).map(x=>`${x.fy}-${String(x.fy+1).slice(2)}:${x.marks}`).join('; ');
+    return {
+      'नाव': emp.name,
+      'आस्थापना क्र.': emp.empno,
+      'सध्याचे कार्यालय': emp.office||'',
+      'वर्ग': emp.cls,
+      'पद': c.label||emp.cadre,
+      'जन्मतारीख': fmt(pd(emp.dob)),
+      'रुजू तारीख': fmt(pd(emp.join)),
+      'माहिती अपूर्ण ध्वज (जन्मतारीख/रुजू तारीख)': r.incompleteReason || '',
+      'प्रथम पदोन्नती स्थिती': promoStatusText(emp.fpdDone),
+      'प्रथम पदोन्नती (प्रत्यक्ष)': emp.fpdActual?fmt(pd(emp.fpdActual)):'',
+      'द्वितीय पदोन्नती स्थिती': promoStatusText(emp.spdDone),
+      'द्वितीय पदोन्नती (प्रत्यक्ष)': emp.spdActual?fmt(pd(emp.spdActual)):'',
+      'तृतीय पदोन्नती स्थिती': promoStatusText(emp.tpdDone),
+      'तृतीय पदोन्नती (प्रत्यक्ष)': emp.tpdActual?fmt(pd(emp.tpdActual)):'',
+      'लाभ-1 यापूर्वी मंजूर?': yn(emp.granted1),
+      'लाभ-1 मंजुरी दिनांक (नोंदवलेले)': emp.granted1&&emp.granted1Date?fmt(pd(emp.granted1Date)):'',
+      'लाभ-1 योजना (नोंदवलेली)': emp.granted1?(emp.granted1Scheme==='raps'?'RAPS':'OTBPS'):'',
+      'लाभ-1 पडताळणी / फेरबदल ध्वज': revisionFlagText(r.lvl1),
+      'लाभ-1 पात्रता साखळी ध्वज': fitnessFlagText(r.lvl1),
+      'लाभ-2 यापूर्वी मंजूर?': yn(emp.granted2),
+      'लाभ-2 मंजुरी दिनांक (नोंदवलेले)': emp.granted2&&emp.granted2Date?fmt(pd(emp.granted2Date)):'',
+      'लाभ-2 योजना (नोंदवलेली)': emp.granted2?(emp.granted2Scheme==='raps'?'RAPS':'OTBPS'):'',
+      'लाभ-2 पडताळणी / फेरबदल ध्वज': revisionFlagText(r.lvl2),
+      'लाभ-2 पात्रता साखळी ध्वज': fitnessFlagText(r.lvl2),
+      'लाभ-3 यापूर्वी मंजूर?': yn(emp.granted3),
+      'लाभ-3 मंजुरी दिनांक (नोंदवलेले)': emp.granted3&&emp.granted3Date?fmt(pd(emp.granted3Date)):'',
+      'लाभ-3 पडताळणी / फेरबदल ध्वज': revisionFlagText(r.lvl3),
+      'लाभ-3 पात्रता साखळी ध्वज': fitnessFlagText(r.lvl3),
+      'स्थैत्व प्रमाणपत्र': yn(emp.permanency),
+      'जात आधारित आरक्षणाद्वारे नियुक्ती/पदोन्नती': yn(emp.casteReservation),
+      'जात वैधता प्रमाणपत्र सादर': emp.casteReservation ? yn(emp.casteValidity) : 'लागू नाही',
+      'मत्ता व दायित्व प्रमाणपत्र सादर वर्ष': emp.assetsCertYear||'',
+      'भाषा परीक्षा सूट': cls3(emp)?yn(emp.lang):'लागू नाही',
+      'संगणक पात्रता प्रमाणपत्र': cls3(emp)?yn(emp.computer):'लागू नाही',
+      'टंकलेखन प्रमाणपत्र': c.typewriting?yn(emp.typewriting):'लागू नाही',
+      'SSD परीक्षा दिनांक': emp.ssdDate?fmt(pd(emp.ssdDate)):'',
+      'QT परीक्षा दिनांक': emp.qtDate?fmt(pd(emp.qtDate)):'',
+      'पायाभूत प्रशिक्षण नामनिर्देशन': cls3(emp)?yn(emp.trainingNominated):'लागू नाही',
+      'पायाभूत प्रशिक्षण पूर्ण': cls3(emp)?yn(emp.trainingDone):'लागू नाही',
+      '55 वर्षे पुनर्विलोकन प्रमाणपत्र दिनांक': emp.review55Date?fmt(pd(emp.review55Date)):'',
+      'फौजदारी/विभागीय चौकशी सुरू': yn(emp.inquiryOngoing),
+      'शिक्षा सुरू': yn(emp.punishmentOngoing),
+      '2 वर्षांपेक्षा जास्त गैरहजर': yn(emp.absence),
+      'सचोटी संशयास्पद': yn(emp.integrity),
+      'मृत्यू दिनांक': emp.deathDate?fmt(pd(emp.deathDate)):'',
+      'VRS दिनांक': emp.vrsDate?fmt(pd(emp.vrsDate)):'',
+      'गोपनीय अहवाल गुण (वर्ष:गुण)': crStr,
+      'सेवानिवृत्ती दिनांक': r.retirement?fmt(r.retirement):'',
+      'लाभ-1 दिनांक': r.lvl1.date?fmt(r.lvl1.date):'',
+      'लाभ-1 प्रकार (शासकीय संज्ञा)': r.lvl1.scheme||'',
+      'लाभ-1 स्थिती': r.lvl1.text,
+      'लाभ-2 दिनांक': r.lvl2.date?fmt(r.lvl2.date):'',
+      'लाभ-2 प्रकार (शासकीय संज्ञा)': r.lvl2.scheme||'',
+      'लाभ-2 स्थिती': r.lvl2.text,
+      'लाभ-3 दिनांक': r.lvl3.date?fmt(r.lvl3.date):'',
+      'लाभ-3 प्रकार (शासकीय संज्ञा)': r.lvl3.scheme||'',
+      'लाभ-3 स्थिती': r.lvl3.text,
+      'सर्वसाधारण अडथळे': r.flags.join('; '),
+      'शेरा / टीप': r.notes.join('; '),
+      'अतिरिक्त सूचना / शेरा': r.remarks||''
+    };
+  });
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'TBP Results');
+
+  // ---- Sheet 2: Confidential Report detail — 5 years per benefit, with the average shown below each group ----
+  const crAoa = [];
+  const blocks = buildCRDetailBlocks();
+  if(!blocks.length){
+    crAoa.push(['सद्यस्थितीत कोणत्याही कर्मचाऱ्यासाठी देय मुदतबद्ध लाभ आढळला नाही.']);
+  } else {
+    blocks.forEach(b=>{
+      crAoa.push([`${b.empName} (${b.cadreLabel}) — ${b.benefitLabel} — देय दि. ${fmt(b.benefitDate)}`]);
+      crAoa.push(['आर्थिक वर्ष', 'गुण']);
+      b.years.forEach(y=> crAoa.push([`${y.fy}-${String(y.fy+1).slice(2)}`, y.marks!==null?y.marks:'—']));
+      crAoa.push(['सरासरी (5 वर्षे)', b.avg!==null ? Number(b.avg.toFixed(2)) : (b.missing>0?'अपूर्ण':'—')]);
+      crAoa.push([]);
+    });
+  }
+  const wsCR = XLSX.utils.aoa_to_sheet(crAoa);
+  wsCR['!cols'] = [{wch:42},{wch:14}];
+  XLSX.utils.book_append_sheet(wb, wsCR, 'गोपनीय अहवाल तपशील');
+
+  XLSX.writeFile(wb, 'TBP_Satara_Results.xlsx');
+});
+
+/* ============================================================
+   PDF EXPORT (rasterized via html2canvas to preserve Marathi text)
+   ============================================================ */
+function addCanvasAsPages(pdf, canvas, pageW, pageH, isVeryFirstPage){
+  const imgW = pageW - 40;
+  const scaleRatio = imgW / canvas.width;
+  const pageHeightInCanvasPx = (pageH - 40) / scaleRatio;
+  let renderedY = 0, first = isVeryFirstPage;
+  while(renderedY < canvas.height){
+    const sliceHeight = Math.min(pageHeightInCanvasPx, canvas.height - renderedY);
+    const sliceCanvas = document.createElement('canvas');
+    sliceCanvas.width = canvas.width;
+    sliceCanvas.height = sliceHeight;
+    const ctx = sliceCanvas.getContext('2d');
+    ctx.drawImage(canvas, 0, renderedY, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
+    const imgData = sliceCanvas.toDataURL('image/png');
+    if(!first) pdf.addPage();
+    pdf.addImage(imgData, 'PNG', 20, 20, imgW, sliceHeight*scaleRatio);
+    renderedY += sliceHeight;
+    first = false;
+  }
+}
+
+/* Builds an off-screen HTML table for the CR breakdown (5 years per benefit + average row below each group)
+   so it can be rasterized the same way as the main results table, preserving Marathi text. */
+function buildCRDetailTableElement(){
+  const blocks = buildCRDetailBlocks();
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'position:fixed; left:-10000px; top:0; width:900px; background:#ffffff; padding:20px; font-family:"Noto Sans Devanagari", sans-serif;';
+  let html = `<h2 style="font-family:'Tiro Devanagari Marathi',serif;color:#5A1C26;margin:0 0 14px 0;">गोपनीय अहवाल तपशील — प्रत्येक लाभासाठी 5 वर्षांचे गुण व सरासरी</h2>`;
+  if(!blocks.length){
+    html += `<p>सद्यस्थितीत कोणत्याही कर्मचाऱ्यासाठी देय मुदतबद्ध लाभ आढळला नाही.</p>`;
+  } else {
+    html += `<table style="width:100%;border-collapse:collapse;font-size:13px;">`;
+    blocks.forEach(b=>{
+      html += `<tr><td colspan="2" style="padding:10px 8px 4px 0;font-weight:700;color:#5A1C26;border-top:2px solid #AC8A4A;">${b.empName} (${b.cadreLabel}) — ${b.benefitLabel} — देय दि. ${fmt(b.benefitDate)}</td></tr>`;
+      html += `<tr><th style="border:1px solid #DCD2BD;background:#E7DAB8;padding:5px 8px;text-align:left;">आर्थिक वर्ष</th><th style="border:1px solid #DCD2BD;background:#E7DAB8;padding:5px 8px;text-align:left;">गुण</th></tr>`;
+      b.years.forEach(y=>{
+        html += `<tr><td style="border:1px solid #DCD2BD;padding:5px 8px;">${y.fy}-${String(y.fy+1).slice(2)}</td><td style="border:1px solid #DCD2BD;padding:5px 8px;">${y.marks!==null?y.marks:'—'}</td></tr>`;
+      });
+      const avgText = b.avg!==null ? b.avg.toFixed(2) : (b.missing>0?'अपूर्ण':'—');
+      html += `<tr><td style="border:1px solid #DCD2BD;padding:5px 8px;font-weight:700;background:#FBF8F0;">सरासरी (5 वर्षे)</td><td style="border:1px solid #DCD2BD;padding:5px 8px;font-weight:700;background:#FBF8F0;">${avgText}</td></tr>`;
+    });
+    html += `</table>`;
+  }
+  wrap.innerHTML = html;
+  document.body.appendChild(wrap);
+  return wrap;
+}
+
+document.getElementById('btn-export-pdf').addEventListener('click', async ()=>{
+  if(!EMPLOYEES.length){ alert('निर्यात करण्यासाठी कोणतीही नोंद उपलब्ध नाही.'); return; }
+  const btn = document.getElementById('btn-export-pdf');
+  btn.disabled = true; btn.textContent='तयार होत आहे...';
+  let crDetailEl = null;
+  try{
+    const table = document.getElementById('results-table');
+    const canvas = await html2canvas(table, { scale:2, backgroundColor:'#ffffff' });
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('l','pt','a4');
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+
+    addCanvasAsPages(pdf, canvas, pageW, pageH, true);
+
+    // ---- Second section: Confidential Report detail (5 years + average below each group) ----
+    crDetailEl = buildCRDetailTableElement();
+    const crCanvas = await html2canvas(crDetailEl, { scale:2, backgroundColor:'#ffffff' });
+    pdf.addPage();
+    addCanvasAsPages(pdf, crCanvas, pageW, pageH, true);
+
+    pdf.save('TBP_Satara_Results.pdf');
+  } catch(err){
+    alert('PDF तयार करताना त्रुटी आली: '+err.message);
+  } finally {
+    if(crDetailEl) crDetailEl.remove();
+    btn.disabled=false; btn.textContent='PDF निर्यात';
+  }
+});
+
+/* init */
+document.querySelectorAll('.date-field').forEach(attachDateMask);
+renderDbFileBar();
+renderList();
+refreshOfficeDatalist();
+</script>
+</body>
+</html>
